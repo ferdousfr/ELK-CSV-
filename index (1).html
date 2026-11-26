@@ -11,58 +11,44 @@
 
 <style>
 *{box-sizing:border-box}
-body{
-  margin:0;padding:20px;background:#f1f5f9;
-  font-family:Arial,sans-serif;color:#172033
-}
-.container{max-width:1100px;margin:auto}
-header{
-  background:linear-gradient(120deg,#102b50,#1769aa);
-  color:white;padding:25px;border-radius:14px;margin-bottom:20px
-}
+body{margin:0;padding:20px;background:#eef2f7;font-family:Arial,sans-serif;color:#172033}
+.container{max-width:1150px;margin:auto}
+header{background:linear-gradient(120deg,#102b50,#1769aa);color:white;padding:25px;border-radius:14px;margin-bottom:20px}
 header h1{margin:0 0 8px;font-size:25px}
 header p{margin:0;color:#dbeafe}
-.uploads{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.card{
-  background:white;padding:20px;border-radius:12px;
-  box-shadow:0 3px 12px #0000000d;margin-bottom:18px
-}
+.card{background:white;padding:20px;border-radius:12px;box-shadow:0 3px 12px #0000000d;margin-bottom:18px}
 .card h2{margin-top:0;font-size:19px}
-input[type=file]{
-  width:100%;padding:12px;border:1px dashed #94a3b8;
-  border-radius:8px;background:#f8fafc
-}
-button{
-  border:0;border-radius:7px;padding:11px 16px;
-  cursor:pointer;font-weight:bold;margin:5px 4px 5px 0;
-  background:#1769aa;color:white
-}
+label{display:block;font-weight:bold;margin:12px 0 6px}
+input{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;background:#fff}
+input[type=file]{background:#f8fafc}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.uploads{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+button{border:0;border-radius:7px;padding:11px 16px;cursor:pointer;font-weight:bold;margin:5px 4px 5px 0;background:#1769aa;color:white}
 button:hover{opacity:.88}
 .green{background:#15803d}
 .dark{background:#334155}
-.report{background:white;padding:25px;border-radius:10px;margin-top:20px}
-.report-head{
-  text-align:center;border-bottom:2px solid #1769aa;
-  padding-bottom:15px;margin-bottom:18px
-}
-.report-head h2{color:#174d7a;margin:0 0 10px}
-.meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.purple{background:#6d28d9}
+.report{background:white;padding:25px;border-radius:10px;margin-top:20px;color:#172033}
+.report-head{text-align:center;border-bottom:2px solid #1769aa;padding-bottom:16px;margin-bottom:18px}
+.report-head h2{color:#174d7a;margin:8px 0 12px}
+.report-logo{max-width:120px;max-height:85px;object-fit:contain;margin:auto;display:block}
+.meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:10px 0}
 .stats{display:flex;gap:12px;margin:18px 0;flex-wrap:wrap}
-.stat{
-  background:#eff6ff;border-radius:8px;padding:14px;
-  flex:1;min-width:130px
-}
+.stat{background:#eff6ff;border-radius:8px;padding:14px;flex:1;min-width:130px}
 .stat strong{display:block;font-size:21px;color:#174d7a;margin-top:5px}
 table{width:100%;border-collapse:collapse;margin-top:15px}
-th,td{padding:11px;border:1px solid #dbe3ec;text-align:left}
+th,td{padding:11px;border:1px solid #dbe3ec;text-align:left;overflow-wrap:anywhere}
 th{background:#174d7a;color:white}
 tr:nth-child(even){background:#f8fafc}
 .actions{margin-top:15px}
 .note{color:#64748b;font-size:13px}
+.preview{max-width:130px;max-height:90px;display:none;margin-top:10px}
 @media(max-width:700px){
- .uploads{grid-template-columns:1fr}
- body{padding:10px}
- .report{padding:12px}
+.formgrid,.uploads{grid-template-columns:1fr}
+body{padding:10px}
+.report{padding:12px}
+table{font-size:12px}
+th,td{padding:7px}
 }
 </style>
 </head>
@@ -72,237 +58,287 @@ tr:nth-child(even){background:#f8fafc}
 
 <header>
 <h1>ELK SMART DLR REPORT GENERATOR</h1>
-<p>Separate MNO & IPTSP Reports | CSV | PDF | PNG</p>
+<p>MNO & IPTSP | Professional Reporting System</p>
 </header>
 
-<div class="uploads">
-  <div class="card">
-    <h2>📊 DLR MNO Report</h2>
-    <input type="file" id="mnoFile" accept=".csv">
-    <button onclick="generate('MNO')">Generate MNO Report</button>
-  </div>
+<div class="card">
+<h2>Report Information</h2>
 
-  <div class="card">
-    <h2>📊 DLR IPTSP Report</h2>
-    <input type="file" id="iptspFile" accept=".csv">
-    <button onclick="generate('IPTSP')">Generate IPTSP Report</button>
-  </div>
+<div class="formgrid">
+<div>
+<label>Report Name</label>
+<input id="reportName" type="text" placeholder="Example: Daily DLR Report">
+</div>
+<div>
+<label>Report Entered By</label>
+<input id="enteredBy" type="text" placeholder="Enter your name">
+</div>
+<div>
+<label>Start Time</label>
+<input id="startTime" type="datetime-local">
+</div>
+<div>
+<label>End Time</label>
+<input id="endTime" type="datetime-local">
+</div>
+</div>
+
+<label>Upload Report Logo / Picture (Optional)</label>
+<input type="file" id="logoFile" accept="image/*">
+<img id="logoPreview" class="preview" alt="Logo Preview">
+</div>
+
+<div class="uploads">
+<div class="card">
+<h2>📊 DLR MNO</h2>
+<label>Upload MNO CSV</label>
+<input type="file" id="mnoFile" accept=".csv">
+<button onclick="generate('MNO')">Generate MNO Report</button>
+</div>
+
+<div class="card">
+<h2>📊 DLR IPTSP</h2>
+<label>Upload IPTSP CSV</label>
+<input type="file" id="iptspFile" accept=".csv">
+<button onclick="generate('IPTSP')">Generate IPTSP Report</button>
+</div>
 </div>
 
 <div id="output"></div>
-
 </div>
 
 <script>
 let reports = {};
+let logoData = "";
 
-function getField(row, names) {
-  const keys = Object.keys(row);
-  for (const name of names) {
-    const key = keys.find(k => k.trim().toLowerCase() === name.toLowerCase());
-    if (key && row[key] !== undefined) return String(row[key]).trim();
-  }
-  return "";
+document.getElementById("logoFile").addEventListener("change",function(){
+ const file=this.files[0];
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=e=>{
+  logoData=e.target.result;
+  const preview=document.getElementById("logoPreview");
+  preview.src=logoData;
+  preview.style.display="block";
+ };
+ reader.readAsDataURL(file);
+});
+
+function getField(row,names){
+ const keys=Object.keys(row);
+ for(const name of names){
+  const key=keys.find(k=>k.trim().toLowerCase()===name.toLowerCase());
+  if(key && row[key]!==undefined)return String(row[key]).trim();
+ }
+ return "";
 }
 
-function parseMessage(message) {
-  let status = "";
-  let description = "";
+function parseMessage(message){
+ let status="",description="";
+ const s=message.match(/["']?statusCode["']?\s*[:=]\s*["']?(\d+)/i);
+ const d=message.match(/["']?errordescription["']?\s*[:=]\s*["']([^"']*)/i);
+ if(s)status=s[1];
+ if(d)description=d[1];
 
-  const s = message.match(/["']?statusCode["']?\s*[:=]\s*["']?(\d+)/i);
-  const d = message.match(/["']?errordescription["']?\s*[:=]\s*["']([^"']*)/i);
-
-  if (s) status = s[1];
-  if (d) description = d[1];
-
-  if (!status) {
-    const fallback = message.match(/\b(1000|1002|1005|1013|1014|1015|1017|1020|1052|1429)\b/);
-    if (fallback) status = fallback[1];
-  }
-
-  if (!description) {
-    description = message || "Unknown";
-  }
-
-  return {status:status || "Unknown", description:description || "Unknown"};
+ if(!status){
+  const f=message.match(/\b\d{4}\b/);
+  if(f)status=f[0];
+ }
+ if(!description)description=message||"Unknown";
+ return {status:status||"Unknown",description};
 }
 
-function generate(type) {
-  const input = document.getElementById(type === "MNO" ? "mnoFile" : "iptspFile");
-  const file = input.files[0];
+function escapeHtml(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
 
-  if (!file) {
-    alert("Please select the " + type + " CSV file first.");
-    return;
-  }
+function formatDate(value){
+ if(!value)return "";
+ const d=new Date(value);
+ return isNaN(d.getTime())?value:d.toLocaleString();
+}
 
-  Papa.parse(file, {
-    header:true,
-    skipEmptyLines:true,
-    complete:function(result) {
-      const rows = result.data;
-      if (!rows.length) {
-        alert("CSV file is empty.");
-        return;
-      }
+function generate(type){
+ const input=document.getElementById(type==="MNO"?"mnoFile":"iptspFile");
+ const file=input.files[0];
+ if(!file){alert("Please select "+type+" CSV file.");return;}
 
-      const counts = {};
-      let timestamps = [];
+ const reportName=document.getElementById("reportName").value.trim()||("DLR "+type+" Report");
+ const enteredBy=document.getElementById("enteredBy").value.trim()||"Not specified";
+ const manualStart=document.getElementById("startTime").value;
+ const manualEnd=document.getElementById("endTime").value;
 
-      rows.forEach(row => {
-        const message = getField(row, ["message","Message","log","description"]);
-        const parsed = parseMessage(message);
+ if(manualStart && manualEnd && new Date(manualStart)>new Date(manualEnd)){
+  alert("End Time must be after Start Time.");
+  return;
+ }
 
-        const directStatus = getField(row, ["statusCode","status_code","status code"]);
-        const directDescription = getField(row, ["errorDescription","errordescription","error_description"]);
+ Papa.parse(file,{
+  header:true,
+  skipEmptyLines:true,
+  complete:function(result){
+   const rows=result.data;
+   if(!rows.length){alert("CSV file is empty.");return;}
 
-        const status = directStatus || parsed.status;
-        const description = directDescription || parsed.description;
+   const counts={};
+   const timestamps=[];
 
-        const key = status + "||" + description;
-        counts[key] = (counts[key] || 0) + 1;
+   rows.forEach(row=>{
+    const message=getField(row,["message","log","description"]);
+    const parsed=parseMessage(message);
+    const directStatus=getField(row,["statusCode","status_code","status code"]);
+    const directDescription=getField(row,["errorDescription","errordescription","error_description"]);
 
-        const timestamp = getField(row, ["@timestamp","timestamp","time"]);
-        if (timestamp) {
-          const date = new Date(timestamp);
-          if (!isNaN(date.getTime())) timestamps.push(date);
-        }
-      });
+    const status=directStatus||parsed.status;
+    const description=directDescription||parsed.description;
+    const key=status+"||"+description;
+    counts[key]=(counts[key]||0)+1;
 
-      const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-      const total = rows.length;
-      const generated = new Date().toLocaleString();
-
-      let start = "Not available";
-      let end = "Not available";
-
-      if (timestamps.length) {
-        timestamps.sort((a,b) => a-b);
-        start = timestamps[0].toLocaleString();
-        end = timestamps[timestamps.length-1].toLocaleString();
-      }
-
-      const report = document.createElement("div");
-      report.className = "card";
-
-      const safeName = type === "MNO" ? "DLR MNO" : "DLR IPTSP";
-
-      report.innerHTML = `
-        <div class="report" id="report-${type}">
-          <div class="report-head">
-            <h2>${safeName} REPORT</h2>
-            <div class="meta">
-              <span><b>Start Time:</b> ${start}</span>
-              <span><b>End Time:</b> ${end}</span>
-            </div>
-            <p><b>Report Generated:</b> ${generated}</p>
-            <p class="note">Source File: ${escapeHtml(file.name)}</p>
-          </div>
-
-          <div class="stats">
-            <div class="stat">Total Records<strong>${total.toLocaleString()}</strong></div>
-            <div class="stat">Unique Status<strong>${sorted.length}</strong></div>
-          </div>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Status Code</th>
-                <th>Error Description</th>
-                <th>Count</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${sorted.map(item => {
-                const parts = item[0].split("||");
-                return `<tr>
-                  <td>${escapeHtml(parts[0])}</td>
-                  <td>${escapeHtml(parts.slice(1).join("||"))}</td>
-                  <td>${item[1].toLocaleString()}</td>
-                </tr>`;
-              }).join("")}
-            </tbody>
-          </table>
-          <p class="note" style="text-align:center;margin-top:20px">
-            ELK Smart DLR Report Generator
-          </p>
-        </div>
-
-        <div class="actions">
-          <button class="green" onclick="downloadCSV('${type}')">Download CSV</button>
-          <button onclick="downloadPNG('${type}')">Save PNG Image</button>
-          <button class="dark" onclick="downloadPDF('${type}')">Save PDF</button>
-        </div>
-      `;
-
-      document.getElementById("output").prepend(report);
-      reports[type] = sorted;
-      report.scrollIntoView({behavior:"smooth"});
-    },
-    error:function() {
-      alert("Unable to read CSV file.");
+    const timestamp=getField(row,["@timestamp","timestamp","time"]);
+    if(timestamp){
+     const date=new Date(timestamp);
+     if(!isNaN(date.getTime()))timestamps.push(date);
     }
+   });
+
+   const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+   timestamps.sort((a,b)=>a-b);
+
+   const start=manualStart?formatDate(manualStart):(timestamps.length?timestamps[0].toLocaleString():"Not available");
+   const end=manualEnd?formatDate(manualEnd):(timestamps.length?timestamps[timestamps.length-1].toLocaleString():"Not available");
+   const generated=new Date().toLocaleString();
+
+   const id="report-"+type;
+   const previous=document.getElementById(id);
+   if(previous)previous.closest(".result-card").remove();
+
+   const resultCard=document.createElement("div");
+   resultCard.className="card result-card";
+
+   resultCard.innerHTML=`
+   <div class="report" id="${id}">
+    <div class="report-head">
+     ${logoData?`<img class="report-logo" src="${logoData}" alt="Report Logo">`:""}
+     <h2>${escapeHtml(reportName)}</h2>
+     <h3>${type==="MNO"?"DLR MNO REPORT":"DLR IPTSP REPORT"}</h3>
+     <div class="meta">
+      <span><b>Start Time:</b> ${escapeHtml(start)}</span>
+      <span><b>End Time:</b> ${escapeHtml(end)}</span>
+     </div>
+     <p><b>Report Entered By:</b> ${escapeHtml(enteredBy)}</p>
+     <p><b>Report Generated:</b> ${escapeHtml(generated)}</p>
+     <p class="note">Source File: ${escapeHtml(file.name)}</p>
+    </div>
+
+    <div class="stats">
+     <div class="stat">Total Records<strong>${rows.length.toLocaleString()}</strong></div>
+     <div class="stat">Unique Status<strong>${sorted.length.toLocaleString()}</strong></div>
+    </div>
+
+    <table>
+     <thead><tr>
+      <th>Status Code</th>
+      <th>Error Description</th>
+      <th>Count</th>
+     </tr></thead>
+     <tbody>
+      ${sorted.map(item=>{
+       const parts=item[0].split("||");
+       return `<tr>
+        <td>${escapeHtml(parts[0])}</td>
+        <td>${escapeHtml(parts.slice(1).join("||"))}</td>
+        <td>${item[1].toLocaleString()}</td>
+       </tr>`;
+      }).join("")}
+     </tbody>
+    </table>
+    <p class="note" style="text-align:center;margin-top:20px">
+     ELK Smart DLR Report Generator
+    </p>
+   </div>
+
+   <div class="actions">
+    <button class="green" onclick="downloadCSV('${type}')">Download CSV</button>
+    <button class="purple" onclick="downloadPNG('${type}')">Download PNG Picture</button>
+    <button class="dark" onclick="downloadPDF('${type}')">Download PDF</button>
+   </div>`;
+
+   document.getElementById("output").prepend(resultCard);
+   reports[type]=sorted;
+   resultCard.scrollIntoView({behavior:"smooth"});
+  },
+  error:function(){alert("Unable to read CSV file.");}
+ });
+}
+
+function saveBlob(blob,filename){
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;
+ a.download=filename;
+ document.body.appendChild(a);
+ a.click();
+ a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+
+function downloadCSV(type){
+ if(!reports[type])return;
+ const rows=[["Status Code","Error Description","Count"],
+ ...reports[type].map(item=>{
+  const p=item[0].split("||");
+  return [p[0],p.slice(1).join("||"),item[1]];
+ })];
+ const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ saveBlob(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}),"DLR_"+type+"_Report.csv");
+}
+
+async function downloadPNG(type){
+ const element=document.getElementById("report-"+type);
+ if(!element)return;
+
+ try{
+  const canvas=await html2canvas(element,{
+   scale:2,
+   backgroundColor:"#ffffff",
+   useCORS:true,
+   logging:false,
+   windowWidth:element.scrollWidth,
+   windowHeight:element.scrollHeight
   });
+
+  canvas.toBlob(blob=>{
+   if(blob)saveBlob(blob,"DLR_"+type+"_Report.png");
+   else alert("Unable to create PNG image.");
+  },"image/png");
+ }catch(error){
+  alert("PNG creation failed. Please try again.");
+ }
 }
 
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-}
+function downloadPDF(type){
+ const element=document.getElementById("report-"+type);
+ if(!element)return;
+ const win=window.open("","_blank");
+ if(!win){alert("Please allow pop-ups for PDF printing.");return;}
 
-function downloadCSV(type) {
-  if (!reports[type]) return;
-  const rows = [["Status Code","Error Description","Count"], ...reports[type].map(item => {
-    const p = item[0].split("||");
-    return [p[0],p.slice(1).join("||"),item[1]];
-  })];
-
-  const csv = rows.map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
-  const blob = new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
-  saveBlob(blob, "DLR_"+type+"_Report.csv");
-}
-
-function downloadPNG(type) {
-  const element = document.getElementById("report-"+type);
-  if (!element) return;
-  html2canvas(element,{scale:2,backgroundColor:"#ffffff",useCORS:true})
-    .then(canvas => {
-      canvas.toBlob(blob => saveBlob(blob,"DLR_"+type+"_Report.png"));
-    });
-}
-
-function downloadPDF(type) {
-  const element = document.getElementById("report-"+type);
-  if (!element) return;
-  const win = window.open("","_blank");
-  if (!win) {
-    alert("Please allow pop-ups for PDF printing.");
-    return;
-  }
-  win.document.write(`
-    <html><head><title>DLR ${type} Report</title>
-    <style>
-    body{font-family:Arial;padding:20px}
-    table{width:100%;border-collapse:collapse}
-    th,td{border:1px solid #ccc;padding:8px;text-align:left}
-    th{background:#174d7a;color:white}
-    .report-head{text-align:center;margin-bottom:20px}
-    .meta{display:flex;justify-content:space-between}
-    </style></head><body>${element.outerHTML}
-    <script>window.onload=function(){window.print()}<\/script>
-    </body></html>
-  `);
-  win.document.close();
-}
-
-function saveBlob(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
+ win.document.write(`
+ <html><head><title>DLR ${type} Report</title>
+ <style>
+ body{font-family:Arial;padding:20px}
+ table{width:100%;border-collapse:collapse}
+ th,td{border:1px solid #ccc;padding:8px;text-align:left}
+ th{background:#174d7a;color:white}
+ .report-head{text-align:center;border-bottom:2px solid #1769aa;padding-bottom:15px}
+ .report-logo{max-width:120px;max-height:85px}
+ @media print{body{padding:10px}}
+ </style></head><body>
+ ${element.outerHTML}
+ <script>window.onload=function(){window.print()}<\/script>
+ </body></html>`);
+ win.document.close();
 }
 </script>
 </body>
