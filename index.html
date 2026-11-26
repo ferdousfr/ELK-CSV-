@@ -1,322 +1,69 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>OpsHub - DLR Report Generator</title>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
-:root {
-  --primary: #5146e5;
-  --blue: #174e83;
-  --bg: #f5f7fc;
-  --border: #dce3ef;
-  --text: #20283b;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Arial, sans-serif;
-}
-
-button, input, select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-.app {
-  display: flex;
-  min-height: 100vh;
-}
-
-/* Sidebar */
-
-.sidebar {
-  width: 215px;
-  background: white;
-  border-right: 1px solid var(--border);
-  padding: 20px 12px;
-  flex-shrink: 0;
-}
-
-.logo {
-  font-size: 17px;
-  font-weight: bold;
-  color: var(--blue);
-  margin-bottom: 35px;
-}
-
-.nav {
-  padding: 12px;
-  margin-bottom: 5px;
-  border-radius: 7px;
-  color: #42516b;
-}
-
-.nav.active {
-  color: var(--primary);
-  background: #f0efff;
-  font-weight: bold;
-}
-
-/* Main */
-
-.main {
-  flex: 1;
-  min-width: 0;
-}
-
-.topbar {
-  background: white;
-  border-bottom: 1px solid var(--border);
-  padding: 18px 24px;
-  display: flex;
-  justify-content: space-between;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.topbar input {
-  max-width: 300px;
-}
-
-.tabs {
-  display: flex;
-  gap: 25px;
-  background: white;
-  padding: 15px 25px;
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto;
-}
-
-.tabs span {
-  white-space: nowrap;
-  color: #536078;
-}
-
-.tabs .selected {
-  color: var(--primary);
-  font-weight: bold;
-  border-bottom: 2px solid var(--primary);
-  padding-bottom: 10px;
-}
-
-.content {
-  max-width: 1250px;
-  margin: auto;
-  padding: 25px;
-}
-
-h2 {
-  margin-top: 0;
-  font-size: 23px;
-}
-
-.card {
-  background: white;
-  border: 1px solid #e0e6f0;
-  border-radius: 14px;
-  margin-bottom: 20px;
-  box-shadow: 0 3px 10px #1c315008;
-}
-
-.card-title {
-  padding: 18px 24px;
-  border-bottom: 1px solid #edf0f6;
-  font-weight: bold;
-}
-
-.card-body {
-  padding: 24px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-}
-
-.field label {
-  display: block;
-  font-size: 12px;
-  color: #697893;
-  margin-bottom: 8px;
-  font-weight: bold;
-}
-
-input, select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #cfd8e8;
-  border-radius: 7px;
-  background: white;
-  color: var(--text);
-}
-
-input:focus, select:focus {
-  outline: 2px solid #d9d6ff;
-  border-color: var(--primary);
-}
-
-.upload-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.upload-box {
-  border: 1px dashed #c9d3e6;
-  border-radius: 12px;
-  padding: 22px;
-  text-align: center;
-  background: #fcfdff;
-}
-
-.upload-box h3 {
-  margin-top: 0;
-  font-size: 16px;
-}
-
-.upload-box input {
-  margin-top: 12px;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px;
-  margin-top: 20px;
-}
-
-.btn {
-  padding: 11px 17px;
-  background: var(--primary);
-  color: white;
-  border: 0;
-  border-radius: 7px;
-  font-weight: bold;
-}
-
-.btn.secondary {
-  background: #edf0f8;
-  color: #35435e;
-}
-
-.btn:disabled {
-  opacity: .45;
-  cursor: not-allowed;
-}
-
-.status {
-  color: #65738b;
-  font-size: 13px;
-  margin-top: 15px;
-}
-
-/* Report */
-
-.report {
-  background: white;
-  padding: 35px;
-  color: #191919;
-  border: 1px solid #e0e4eb;
-}
-
-.report-brand {
-  color: #999;
-  letter-spacing: 2px;
-  font-size: 15px;
-  margin-bottom: 20px;
-}
-
-.report h2 {
-  font-family: Georgia, serif;
-  font-size: 38px;
-  font-weight: normal;
-  margin: 0 0 12px;
-}
-
-.report-period {
-  color: #888;
-  font-size: 20px;
-  margin-bottom: 25px;
-}
-
-.report-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 25px;
-  margin: 25px 0;
-  font-family: monospace;
-  font-weight: bold;
-}
-
-.report table {
-  border-collapse: collapse;
-  width: 100%;
-  font-family: monospace;
-}
-
-.report th,
-.report td {
-  border: 2px solid #d2d7df;
-  padding: 12px;
-  text-align: left;
-}
-
-.report th {
-  background: #eef0f5;
-}
-
-.report td:first-child {
-  font-weight: bold;
-  background: #f0f2f7;
-}
-
-.report td:last-child,
-.report th:last-child {
-  text-align: right;
-}
-
-.report-meta {
-  font-family: monospace;
-  font-size: 17px;
-  font-weight: bold;
-  line-height: 2;
-  margin-top: 30px;
-}
-
-.normal {
-  color: #247346;
-}
-
-@media(max-width:850px) {
-  .sidebar { display: none; }
-  .grid, .upload-grid { grid-template-columns: 1fr; }
-  .content { padding: 15px; }
-  .report { padding: 20px; }
-  .report h2 { font-size: 28px; }
-  .report-period { font-size: 15px; }
-  .report th, .report td { padding: 7px; font-size: 12px; }
+:root{--primary:#5146e5;--blue:#174e83;--bg:#f5f7fc;--border:#dce3ef;--text:#20283b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px Arial,sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{width:215px;background:#fff;border-right:1px solid var(--border);padding:20px 12px;flex-shrink:0}
+.logo{font-size:17px;font-weight:bold;color:var(--blue);margin-bottom:35px}
+.nav{padding:12px;margin-bottom:5px;border-radius:7px;color:#42516b}
+.nav.active{color:var(--primary);background:#f0efff;font-weight:bold}
+.main{flex:1;min-width:0}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:18px 24px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.tabs{display:flex;gap:25px;background:#fff;padding:15px 25px;border-bottom:1px solid var(--border);overflow-x:auto}
+.tabs span{white-space:nowrap;color:#536078}
+.tabs .selected{color:var(--primary);font-weight:bold;border-bottom:2px solid var(--primary);padding-bottom:10px}
+.content{max-width:1250px;margin:auto;padding:25px}
+h2{margin-top:0;font-size:23px}
+.card{background:#fff;border:1px solid #e0e6f0;border-radius:14px;margin-bottom:20px;box-shadow:0 3px 10px #1c315008}
+.card-title{padding:18px 24px;border-bottom:1px solid #edf0f6;font-weight:bold}
+.card-body{padding:24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.field label{display:block;font-size:12px;color:#697893;margin-bottom:8px;font-weight:bold}
+input,select{width:100%;padding:12px;border:1px solid #cfd8e8;border-radius:7px;background:#fff;color:var(--text)}
+input:focus,select:focus{outline:2px solid #d9d6ff;border-color:var(--primary)}
+.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.upload-box{border:1px dashed #c9d3e6;border-radius:12px;padding:22px;text-align:center;background:#fcfdff}
+.upload-box h3{margin-top:0;font-size:16px}
+.upload-box input{margin-top:12px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}
+.btn{padding:11px 17px;background:var(--primary);color:#fff;border:0;border-radius:7px;font-weight:bold}
+.btn.secondary{background:#edf0f8;color:#35435e}
+.status{color:#65738b;font-size:13px;margin-top:15px}
+.report{background:#fff;padding:35px;color:#191919;border:1px solid #e0e4eb}
+.report-brand{color:#999;letter-spacing:2px;font-size:15px;margin-bottom:20px}
+.report h2{font:normal 38px Georgia,serif;margin:0 0 12px}
+.report-period{color:#888;font-size:20px;margin-bottom:25px}
+.report-summary{display:flex;flex-wrap:wrap;gap:25px;margin:25px 0;font-family:monospace;font-weight:bold}
+.report table{border-collapse:collapse;width:100%;font-family:monospace}
+.report th,.report td{border:2px solid #d2d7df;padding:12px;text-align:left}
+.report th{background:#eef0f5}
+.report td:first-child{font-weight:bold;background:#f0f2f7}
+.report td:last-child,.report th:last-child{text-align:right}
+.report-meta{font:bold 17px/2 monospace;margin-top:30px}
+.normal{color:#247346}
+@media(max-width:850px){
+.sidebar{display:none}
+.grid,.upload-grid{grid-template-columns:1fr}
+.content{padding:15px}
+.report{padding:20px}
+.report h2{font-size:28px}
+.report-period{font-size:15px}
+.report th,.report td{padding:7px;font-size:12px}
 }
 </style>
 </head>
-
 <body>
 <div class="app">
-
-<!-- Sidebar -->
 <aside class="sidebar">
   <div class="logo">INFOZILLION<br>TELETECH BD</div>
   <div class="nav">Dashboard</div>
@@ -330,15 +77,9 @@ input:focus, select:focus {
 </aside>
 
 <div class="main">
-
-<!-- Top Bar -->
 <header class="topbar">
   <div>Dashboard / <b>Daily Shift Report</b></div>
-  <div>
-    <span id="clock12"></span>
-    &nbsp; | &nbsp;
-    <span id="clock24"></span>
-  </div>
+  <div><span id="clock12"></span> | <span id="clock24"></span></div>
 </header>
 
 <div class="tabs">
@@ -350,47 +91,23 @@ input:focus, select:focus {
 </div>
 
 <main class="content">
-
 <h2>DLR <span style="color:#6255eb">Report</span></h2>
 
-<!-- Monitoring Window -->
 <section class="card">
   <div class="card-title">Monitoring Window</div>
-
-  <div class="card-body grid">
-    <div class="field">
-      <label>FROM</label>
-      <div class="grid">
-        <input type="date" id="fromDate">
-        <input type="time" id="fromTime">
-      </div>
-    </div>
-
-    <div class="field">
-      <label>TO</label>
-      <div class="grid">
-        <input type="date" id="toDate">
-        <input type="time" id="toTime">
-      </div>
-    </div>
+  <div class="card-body">
+    Time range will be detected automatically from the <b>@timestamp</b> column of each uploaded CSV.
   </div>
 </section>
 
-<!-- Reporter -->
 <section class="card">
   <div class="card-title">Report Information</div>
-
   <div class="card-body grid">
     <div class="field">
       <label>Reporter Name</label>
-      <input
-        id="reporter"
-        list="reporterList"
-        placeholder="Search or enter reporter name"
-      >
+      <input id="reporter" list="reporterList" placeholder="Search or enter reporter name">
       <datalist id="reporterList"></datalist>
     </div>
-
     <div class="field">
       <label>Company Logo (Optional)</label>
       <input type="file" id="logo" accept="image/*">
@@ -398,584 +115,354 @@ input:focus, select:focus {
   </div>
 </section>
 
-<!-- CSV Upload -->
 <section class="card">
   <div class="card-title">CSV Upload</div>
-
   <div class="card-body upload-grid">
-
     <div class="upload-box">
       <h3>📁 DLR MNO CSV</h3>
       <p>Drop MNO DLR CSV or select file</p>
       <input type="file" id="mnoFile" accept=".csv">
       <div class="status" id="mnoStatus">No file selected</div>
     </div>
-
     <div class="upload-box">
       <h3>📁 DLR IPTSP CSV</h3>
       <p>Drop IPTSP DLR CSV or select file</p>
       <input type="file" id="iptspFile" accept=".csv">
       <div class="status" id="iptspStatus">No file selected</div>
     </div>
-
   </div>
 </section>
 
-<!-- Generate Controls -->
 <section class="card">
   <div class="card-body">
-
-    <button class="btn" onclick="generate('mno')">
-      Generate MNO Report
-    </button>
-
-    <button class="btn" onclick="generate('iptsp')">
-      Generate IPTSP Report
-    </button>
+    <button class="btn" onclick="generate('mno')">Generate MNO Report</button>
+    <button class="btn" onclick="generate('iptsp')">Generate IPTSP Report</button>
 
     <div class="actions">
-      <button class="btn secondary" onclick="downloadImage('mno','png')">
-        MNO PNG
-      </button>
-
-      <button class="btn secondary" onclick="downloadImage('iptsp','png')">
-        IPTSP PNG
-      </button>
-
-      <button class="btn secondary" onclick="downloadImage('mno','jpg')">
-        MNO JPG
-      </button>
-
-      <button class="btn secondary" onclick="downloadImage('iptsp','jpg')">
-        IPTSP JPG
-      </button>
-
-      <button class="btn secondary" onclick="downloadPDF('mno')">
-        MNO PDF
-      </button>
-
-      <button class="btn secondary" onclick="downloadPDF('iptsp')">
-        IPTSP PDF
-      </button>
-
-      <button class="btn secondary" onclick="downloadCSV('mno')">
-        MNO Summary CSV
-      </button>
-
-      <button class="btn secondary" onclick="downloadCSV('iptsp')">
-        IPTSP Summary CSV
-      </button>
-
-      <button class="btn secondary" onclick="copyImage('mno')">
-        Copy MNO Image
-      </button>
-
-      <button class="btn secondary" onclick="copyImage('iptsp')">
-        Copy IPTSP Image
-      </button>
+      <button class="btn secondary" onclick="downloadImage('mno','png')">MNO PNG</button>
+      <button class="btn secondary" onclick="downloadImage('iptsp','png')">IPTSP PNG</button>
+      <button class="btn secondary" onclick="downloadImage('mno','jpg')">MNO JPG</button>
+      <button class="btn secondary" onclick="downloadImage('iptsp','jpg')">IPTSP JPG</button>
+      <button class="btn secondary" onclick="downloadPDF('mno')">MNO PDF</button>
+      <button class="btn secondary" onclick="downloadPDF('iptsp')">IPTSP PDF</button>
+      <button class="btn secondary" onclick="downloadCSV('mno')">MNO Summary CSV</button>
+      <button class="btn secondary" onclick="downloadCSV('iptsp')">IPTSP Summary CSV</button>
+      <button class="btn secondary" onclick="copyImage('mno')">Copy MNO Image</button>
+      <button class="btn secondary" onclick="copyImage('iptsp')">Copy IPTSP Image</button>
     </div>
-
     <p class="status" id="message"></p>
   </div>
 </section>
 
-<!-- MNO Report -->
 <section class="card">
   <div class="card-title">DLR MNO Report Preview</div>
   <div class="card-body">
     <section class="report" id="mnoReport">
-      <div class="report-brand">
-        INFOZILLION TELETECH BD · SERVICE ASSURANCE
-      </div>
-
+      <div class="report-brand">INFOZILLION TELETECH BD · SERVICE ASSURANCE</div>
       <h2>DLR Report — MNO</h2>
       <div class="report-period" id="mnoPeriod">Monitoring Window</div>
-
       <div class="report-summary">
         <span>Total: <b id="mnoTotal">0</b></span>
         <span>Success: <b id="mnoSuccess">0</b></span>
         <span>Error: <b id="mnoErrors">0</b></span>
       </div>
-
       <table>
-        <thead>
-          <tr>
-            <th>Status Code</th>
-            <th>Error Description</th>
-            <th>Count</th>
-          </tr>
-        </thead>
-        <tbody id="mnoRows">
-          <tr><td colspan="3">No data loaded</td></tr>
-        </tbody>
+        <thead><tr><th>Status Code</th><th>Error Description</th><th>Count</th></tr></thead>
+        <tbody id="mnoRows"><tr><td colspan="3">No data loaded</td></tr></tbody>
       </table>
-
       <div class="report-meta">
-        Reporter: <span class="reporterOut">Not specified</span>
-        <br>
+        Reporter: <span class="reporterOut">Not specified</span><br>
         Status : <span class="normal">Normal</span>
       </div>
     </section>
   </div>
 </section>
 
-<!-- IPTSP Report -->
 <section class="card">
   <div class="card-title">DLR IPTSP Report Preview</div>
   <div class="card-body">
     <section class="report" id="iptspReport">
-      <div class="report-brand">
-        INFOZILLION TELETECH BD · SERVICE ASSURANCE
-      </div>
-
+      <div class="report-brand">INFOZILLION TELETECH BD · SERVICE ASSURANCE</div>
       <h2>DLR Report — IPTSP</h2>
       <div class="report-period" id="iptspPeriod">Monitoring Window</div>
-
       <div class="report-summary">
         <span>Total: <b id="iptspTotal">0</b></span>
         <span>Success: <b id="iptspSuccess">0</b></span>
         <span>Error: <b id="iptspErrors">0</b></span>
       </div>
-
       <table>
-        <thead>
-          <tr>
-            <th>Status Code</th>
-            <th>Error Description</th>
-            <th>Count</th>
-          </tr>
-        </thead>
-        <tbody id="iptspRows">
-          <tr><td colspan="3">No data loaded</td></tr>
-        </tbody>
+        <thead><tr><th>Status Code</th><th>Error Description</th><th>Count</th></tr></thead>
+        <tbody id="iptspRows"><tr><td colspan="3">No data loaded</td></tr></tbody>
       </table>
-
       <div class="report-meta">
-        Reporter: <span class="reporterOut">Not specified</span>
-        <br>
+        Reporter: <span class="reporterOut">Not specified</span><br>
         Status : <span class="normal">Normal</span>
       </div>
     </section>
   </div>
 </section>
-
 </main>
 </div>
 </div>
 
 <script>
-// Bangladesh Clock
-function updateClock() {
-  const now = new Date();
-
-  document.getElementById("clock12").textContent =
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: "Asia/Dhaka",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true
-    }).format(now);
-
-  document.getElementById("clock24").textContent =
-    new Intl.DateTimeFormat("en-GB", {
-      timeZone: "Asia/Dhaka",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false
-    }).format(now);
+function updateClock(){
+  const n=new Date();
+  const o={timeZone:"Asia/Dhaka",hour:"2-digit",minute:"2-digit",second:"2-digit"};
+  document.getElementById("clock12").textContent=
+    new Intl.DateTimeFormat("en-US",{...o,hour12:true}).format(n);
+  document.getElementById("clock24").textContent=
+    new Intl.DateTimeFormat("en-GB",{...o,hour12:false}).format(n);
 }
-
 updateClock();
-setInterval(updateClock, 1000);
+setInterval(updateClock,1000);
 
+const reporterInput=document.getElementById("reporter");
+const reporterList=document.getElementById("reporterList");
 
-// Set default monitoring window
-const now = new Date();
-const date = now.toLocaleDateString("en-CA", {
-  timeZone: "Asia/Dhaka"
-});
-
-document.getElementById("fromDate").value = date;
-document.getElementById("toDate").value = date;
-
-
-// Save and search reporter names
-const reporterInput = document.getElementById("reporter");
-const reporterList = document.getElementById("reporterList");
-
-function loadReporters() {
-  const names = JSON.parse(
-    localStorage.getItem("dlrReporters") || "[]"
-  );
-
-  reporterList.innerHTML = "";
-
-  names.forEach(name => {
-    const option = document.createElement("option");
-    option.value = name;
-    reporterList.appendChild(option);
+function loadReporters(){
+  const names=JSON.parse(localStorage.getItem("dlrReporters")||"[]");
+  reporterList.innerHTML="";
+  names.forEach(n=>{
+    const o=document.createElement("option");
+    o.value=n;
+    reporterList.appendChild(o);
   });
 }
 
-reporterInput.addEventListener("change", () => {
-  const name = reporterInput.value.trim();
-
-  if (!name) return;
-
-  let names = JSON.parse(
-    localStorage.getItem("dlrReporters") || "[]"
-  );
-
-  if (!names.includes(name)) {
-    names.push(name);
-    localStorage.setItem("dlrReporters", JSON.stringify(names));
+reporterInput.addEventListener("change",()=>{
+  const n=reporterInput.value.trim();
+  if(!n)return;
+  let a=JSON.parse(localStorage.getItem("dlrReporters")||"[]");
+  if(!a.includes(n)){
+    a.push(n);
+    localStorage.setItem("dlrReporters",JSON.stringify(a));
   }
-
   loadReporters();
 });
-
 loadReporters();
 
+function parseCSV(t){
+  t=t.replace(/^\uFEFF/,"");
+  const first=t.split(/\r?\n/)[0];
+  const ds=[",",";","\t","|"];
+  const delim=ds.sort((a,b)=>first.split(b).length-first.split(a).length)[0];
+  let rows=[],row=[],cell="",q=false;
 
-// CSV parser - supports quoted fields
-function parseCSV(text) {
-  text = text.replace(/^\uFEFF/, "");
-
-  const firstLine = text.split(/\r?\n/)[0];
-
-  const delimiters = [",", ";", "\t", "|"];
-
-  const delimiter = delimiters.sort((a, b) =>
-    firstLine.split(b).length - firstLine.split(a).length
-  )[0];
-
-  const rows = [];
-  let row = [];
-  let cell = "";
-  let quoted = false;
-
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
-
-    if (char === '"' && quoted && text[i + 1] === '"') {
-      cell += '"';
-      i++;
-    } else if (char === '"') {
-      quoted = !quoted;
-    } else if (char === delimiter && !quoted) {
+  for(let i=0;i<t.length;i++){
+    let c=t[i];
+    if(c==='"'&&q&&t[i+1]==='"'){cell+='"';i++}
+    else if(c==='"')q=!q;
+    else if(c===delim&&!q){row.push(cell);cell=""}
+    else if((c==="\n"||c==="\r")&&!q){
+      if(c==="\r"&&t[i+1]==="\n")i++;
       row.push(cell);
-      cell = "";
-    } else if ((char === "\n" || char === "\r") && !quoted) {
-      if (char === "\r" && text[i + 1] === "\n") i++;
-
-      row.push(cell);
-
-      if (row.some(value => value.trim())) {
-        rows.push(row);
-      }
-
-      row = [];
-      cell = "";
-    } else {
-      cell += char;
-    }
+      if(row.some(x=>x.trim()))rows.push(row);
+      row=[];
+      cell="";
+    }else cell+=c;
   }
 
   row.push(cell);
-
-  if (row.some(value => value.trim())) {
-    rows.push(row);
-  }
-
+  if(row.some(x=>x.trim()))rows.push(row);
   return rows;
 }
 
+function parseTimestamp(value){
+  if(!value)return null;
+  const v=value.trim();
 
-// Analyze CSV
-function analyzeCSV(text) {
-  const data = parseCSV(text);
+  const m=v.match(/^([A-Za-z]{3})\s+(\d{1,2}),\s*(\d{4})\s*@\s*(\d{1,2}):(\d{2}):(\d{2})(?:\.(\d{1,3}))?$/);
 
-  if (data.length < 2) {
-    throw new Error("CSV file is empty.");
+  if(m){
+    const months={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+    return new Date(
+      Number(m[3]),
+      months[m[1]],
+      Number(m[2]),
+      Number(m[4]),
+      Number(m[5]),
+      Number(m[6]),
+      Number((m[7]||"0").padEnd(3,"0"))
+    );
   }
 
-  const headers = data[0].map(value =>
-    value.trim().toLowerCase()
-  );
-
-  const messageIndex = headers.findIndex(value =>
-    value === "message" || value.includes("message")
-  );
-
-  const timeIndex = headers.findIndex(value =>
-    value === "@timestamp" || value.includes("timestamp")
-  );
-
-  const counts = {};
-  const timestamps = [];
-
-  for (let i = 1; i < data.length; i++) {
-    const message = data[i][messageIndex] || "";
-
-    const codeMatch = message.match(
-      /statusCode\s*[=:]\s*["']?(\d{3,5})/i
-    );
-
-    const descMatch = message.match(
-      /errordescription\s*[=:]\s*["']?([^,\]\)>"']+)/i
-    );
-
-    const code = codeMatch ? codeMatch[1] : "Unknown";
-
-    const description = descMatch
-      ? descMatch[1].trim()
-      : code === "1000"
-        ? "Success"
-        : "Description unavailable";
-
-    const key = code + "||" + description;
-
-    counts[key] = (counts[key] || 0) + 1;
-
-    if (timeIndex >= 0 && data[i][timeIndex]) {
-      const time = new Date(data[i][timeIndex]);
-
-      if (!isNaN(time)) {
-        timestamps.push(time);
-      }
-    }
-  }
-
-  return { counts, timestamps };
+  const d=new Date(v);
+  return isNaN(d.getTime())?null:d;
 }
 
+function formatTimestamp(d){
+  return new Intl.DateTimeFormat("en-US",{
+    timeZone:"Asia/Dhaka",
+    month:"short",
+    day:"2-digit",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit",
+    hour12:false
+  }).format(d).replace(/, (?=\d{2}:)/," @ ")
+  +"."+String(d.getMilliseconds()).padStart(3,"0");
+}
 
-// Generate separate MNO / IPTSP reports
-async function generate(type) {
-  try {
-    const input = document.getElementById(
-      type === "mno" ? "mnoFile" : "iptspFile"
-    );
+function analyzeCSV(text){
+  const data=parseCSV(text);
+  if(data.length<2)throw Error("CSV file is empty.");
 
-    if (!input.files[0]) {
-      alert("Please upload the " + type.toUpperCase() + " CSV.");
-      return;
-    }
+  const h=data[0].map(x=>x.trim().toLowerCase());
+  const mi=h.findIndex(x=>x==="message"||x.includes("message"));
+  const ti=h.findIndex(x=>x==="@timestamp");
 
-    const text = await input.files[0].text();
-    const result = analyzeCSV(text);
+  if(ti<0)throw Error('CSV must contain an "@timestamp" column.');
+  if(mi<0)throw Error('CSV must contain a "message" column.');
 
-    let total = 0;
-    let success = 0;
+  const counts={},times=[];
 
-    const rows = document.getElementById(type + "Rows");
-    rows.innerHTML = "";
+  for(let i=1;i<data.length;i++){
+    const msg=data[i][mi]||"";
+    const cm=msg.match(/statusCode\s*[=:]\s*["']?(\d{3,5})/i);
+    const dm=msg.match(/errordescription\s*[=:]\s*["']?([^,\]\) >"']+)/i);
 
-    const sorted = Object.entries(result.counts).sort((a, b) => {
-      const codeA = a[0].split("||")[0];
-      const codeB = b[0].split("||")[0];
+    const code=cm?cm[1]:"Unknown";
+    const rawDesc=dm?dm[1].trim():"Description unavailable";
 
-      if (codeA === "1000") return -1;
-      if (codeB === "1000") return 1;
+    // Normalize all 1000 descriptions into one Success row.
+    const desc=code==="1000"?"Success":rawDesc;
+    const key=code+"||"+desc;
 
-      return codeA.localeCompare(codeB, undefined, {
-        numeric: true
-      });
+    counts[key]=(counts[key]||0)+1;
+
+    const d=parseTimestamp(data[i][ti]);
+    if(d)times.push(d);
+  }
+
+  if(!times.length)throw Error('No valid date-time values found in "@timestamp".');
+
+  times.sort((a,b)=>a-b);
+  return{counts,times:[times[0],times[times.length-1]]};
+}
+
+async function generate(type){
+  try{
+    const input=document.getElementById(type==="mno"?"mnoFile":"iptspFile");
+    if(!input.files[0])throw Error("Please upload the "+type.toUpperCase()+" CSV.");
+
+    const r=analyzeCSV(await input.files[0].text());
+    let total=0,success=0;
+    const tbody=document.getElementById(type+"Rows");
+    tbody.innerHTML="";
+
+    const sorted=Object.entries(r.counts).sort((a,b)=>{
+      const x=a[0].split("||")[0],y=b[0].split("||")[0];
+      if(x==="1000")return -1;
+      if(y==="1000")return 1;
+      return x.localeCompare(y,undefined,{numeric:true});
     });
 
-    sorted.forEach(([key, count]) => {
-      const [code, description] = key.split("||");
+    sorted.forEach(([k,c])=>{
+      const [code,desc]=k.split("||");
+      total+=c;
+      if(code==="1000")success+=c;
 
-      total += count;
-
-      if (code === "1000") {
-        success += count;
-      }
-
-      const tr = document.createElement("tr");
-
-      [code, description, count.toLocaleString()].forEach(value => {
-        const td = document.createElement("td");
-        td.textContent = value;
+      const tr=document.createElement("tr");
+      [code,desc,c.toLocaleString()].forEach(v=>{
+        const td=document.createElement("td");
+        td.textContent=v;
         tr.appendChild(td);
       });
-
-      rows.appendChild(tr);
+      tbody.appendChild(tr);
     });
 
-    document.getElementById(type + "Total").textContent =
-      total.toLocaleString();
+    document.getElementById(type+"Total").textContent=total.toLocaleString();
+    document.getElementById(type+"Success").textContent=success.toLocaleString();
+    document.getElementById(type+"Errors").textContent=(total-success).toLocaleString();
 
-    document.getElementById(type + "Success").textContent =
-      success.toLocaleString();
+    document.getElementById(type+"Period").textContent=
+      formatTimestamp(r.times[0])+" - "+formatTimestamp(r.times[1]);
 
-    document.getElementById(type + "Errors").textContent =
-      (total - success).toLocaleString();
-
-    const from =
-      document.getElementById("fromDate").value + " " +
-      document.getElementById("fromTime").value;
-
-    const to =
-      document.getElementById("toDate").value + " " +
-      document.getElementById("toTime").value;
-
-    document.getElementById(type + "Period").textContent =
-      from + " – " + to;
-
-    document.querySelectorAll(".reporterOut").forEach(element => {
-      element.textContent = reporterInput.value || "Not specified";
+    document.querySelectorAll(".reporterOut").forEach(e=>{
+      e.textContent=reporterInput.value||"Not specified";
     });
 
-    document.getElementById("message").textContent =
-      type.toUpperCase() + " report generated successfully.";
-
-  } catch (error) {
-    document.getElementById("message").textContent =
-      "Error: " + error.message;
+    document.getElementById("message").textContent=
+      type.toUpperCase()+" report generated successfully.";
+  }catch(e){
+    document.getElementById("message").textContent="Error: "+e.message;
   }
 }
 
-
-// Download PNG or JPG
-async function downloadImage(type, format) {
-  const report = document.getElementById(type + "Report");
-
-  const canvas = await html2canvas(report, {
-    scale: 2,
-    backgroundColor: "#ffffff"
+async function canvasFor(type){
+  return html2canvas(document.getElementById(type+"Report"),{
+    scale:2,
+    backgroundColor:"#fff"
   });
-
-  const link = document.createElement("a");
-
-  link.download = type.toUpperCase() + "-DLR-Report." + format;
-
-  link.href = canvas.toDataURL(
-    format === "jpg" ? "image/jpeg" : "image/png"
-  );
-
-  link.click();
 }
 
-
-// Download PDF
-async function downloadPDF(type) {
-  const report = document.getElementById(type + "Report");
-
-  const canvas = await html2canvas(report, {
-    scale: 2,
-    backgroundColor: "#ffffff"
-  });
-
-  const image = canvas.toDataURL("image/png");
-
-  const { jsPDF } = window.jspdf;
-
-  const pdf = new jsPDF("p", "mm", "a4");
-
-  const width = 190;
-  const height = canvas.height * width / canvas.width;
-
-  pdf.addImage(image, "PNG", 10, 10, width, height);
-
-  pdf.save(type.toUpperCase() + "-DLR-Report.pdf");
+async function downloadImage(type,format){
+  const c=await canvasFor(type);
+  const a=document.createElement("a");
+  a.download=type.toUpperCase()+"-DLR-Report."+format;
+  a.href=c.toDataURL(format==="jpg"?"image/jpeg":"image/png");
+  a.click();
 }
 
+async function downloadPDF(type){
+  const c=await canvasFor(type);
+  const {jsPDF}=window.jspdf;
+  const p=new jsPDF("p","mm","a4");
+  const w=190,h=c.height*w/c.width;
+  p.addImage(c.toDataURL("image/png"),"PNG",10,10,w,h);
+  p.save(type.toUpperCase()+"-DLR-Report.pdf");
+}
 
-// Copy image
-async function copyImage(type) {
-  try {
-    const report = document.getElementById(type + "Report");
-
-    const canvas = await html2canvas(report, {
-      scale: 2,
-      backgroundColor: "#ffffff"
+async function copyImage(type){
+  try{
+    const c=await canvasFor(type);
+    c.toBlob(async b=>{
+      await navigator.clipboard.write([new ClipboardItem({"image/png":b})]);
+      alert("Report image copied.");
     });
-
-    canvas.toBlob(async blob => {
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          "image/png": blob
-        })
-      ]);
-
-      alert(type.toUpperCase() + " report image copied.");
-    });
-
-  } catch (error) {
+  }catch(e){
     alert("Copy image requires HTTPS or localhost.");
   }
 }
 
+function downloadCSV(type){
+  const trs=document.querySelectorAll("#"+type+"Rows tr");
+  let csv="Status Code,Error Description,Count\r\n";
 
-// Download separate CSV summary
-function downloadCSV(type) {
-  const rows = document.querySelectorAll(
-    "#" + type + "Rows tr"
-  );
-
-  let csv = "Status Code,Error Description,Count\r\n";
-
-  rows.forEach(row => {
-    const cells = [...row.querySelectorAll("td")];
-
-    if (cells.length === 3) {
-      csv += cells.map(cell =>
-        '"' + cell.textContent.replace(/"/g, '""') + '"'
-      ).join(",") + "\r\n";
+  trs.forEach(r=>{
+    const cells=[...r.querySelectorAll("td")];
+    if(cells.length===3){
+      csv+=cells.map(c=>'"'+c.textContent.replace(/"/g,'""')+'"').join(",")+"\r\n";
     }
   });
 
-  const blob = new Blob(
-    ["\uFEFF" + csv],
-    { type: "text/csv;charset=utf-8" }
-  );
-
-  const link = document.createElement("a");
-
-  link.href = URL.createObjectURL(blob);
-
-  link.download = type.toUpperCase() + "-DLR-Summary.csv";
-
-  link.click();
-
-  URL.revokeObjectURL(link.href);
+  const b=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(b);
+  a.download=type.toUpperCase()+"-DLR-Summary.csv";
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
+["mno","iptsp"].forEach(t=>{
+  document.getElementById(t+"File").onchange=function(){
+    document.getElementById(t+"Status").textContent=this.files[0]?.name||"No file selected";
+  };
+});
 
-// Show selected filenames
-document.getElementById("mnoFile").onchange = function() {
-  document.getElementById("mnoStatus").textContent =
-    this.files[0] ? this.files[0].name : "No file selected";
-};
-
-document.getElementById("iptspFile").onchange = function() {
-  document.getElementById("iptspStatus").textContent =
-    this.files[0] ? this.files[0].name : "No file selected";
-};
-
-
-// Optional logo upload
-document.getElementById("logo").onchange = function() {
-  const file = this.files[0];
-
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = function(event) {
-    document.querySelectorAll(".report-brand").forEach(element => {
-      element.innerHTML =
-        '<img src="' + event.target.result +
-        '" style="max-height:45px;max-width:200px;object-fit:contain">';
+document.getElementById("logo").onchange=function(){
+  const f=this.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    document.querySelectorAll(".report-brand").forEach(x=>{
+      x.innerHTML='<img src="'+e.target.result+'" style="max-height:45px;max-width:200px;object-fit:contain">';
     });
   };
-
-  reader.readAsDataURL(file);
+  r.readAsDataURL(f);
 };
 </script>
-
 </body>
 </html>
