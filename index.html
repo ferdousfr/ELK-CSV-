@@ -11,586 +11,1056 @@
 
 <style>
 *{box-sizing:border-box}
+
 body{
- font-family:Arial,Helvetica,sans-serif;
- background:#f1f5f9;
  margin:0;
+ background:#eef2f7;
  color:#172033;
+ font-family:Arial,sans-serif;
+ padding:20px;
 }
-.wrap{max-width:1050px;margin:25px auto;padding:15px}
-.header{
- background:linear-gradient(120deg,#142b4a,#2563eb);
- color:white;padding:25px;border-radius:13px;
+
+.container{max-width:1100px;margin:auto}
+
+h1{font-size:25px;color:#12345a}
+
+.panel{
+ background:white;
+ padding:20px;
+ border-radius:12px;
+ margin-bottom:18px;
+ box-shadow:0 3px 12px #0000000d;
+}
+
+label{
+ font-weight:bold;
+ display:block;
+ margin:12px 0 7px;
+}
+
+input,button{
+ padding:11px;
+ border-radius:7px;
+ border:1px solid #ccd5e1;
+ font-size:14px;
+}
+
+input{width:100%;background:#fff}
+
+button{
+ cursor:pointer;
+ border:0;
+ background:#145da0;
+ color:white;
+ font-weight:bold;
+ margin:5px 5px 5px 0;
+}
+
+button:hover{opacity:.88}
+button:disabled{opacity:.4;cursor:not-allowed}
+
+.secondary{background:#475569}
+.green{background:#15803d}
+.orange{background:#c76b10}
+
+.uploads{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:15px;
+}
+
+.upload-card{
+ border:1px solid #dbe3ed;
+ padding:15px;
+ border-radius:9px;
+}
+
+.report{
+ background:#fff;
+ padding:25px;
+ border-radius:10px;
+ margin-top:20px;
+}
+
+.report-header{
+ border-bottom:2px solid #174b7a;
+ padding-bottom:14px;
  margin-bottom:18px;
 }
-.header h1{margin:0 0 8px;font-size:25px}
-.header p{margin:0;color:#dbeafe}
-.card{
- background:white;padding:20px;margin-bottom:18px;
- border-radius:12px;box-shadow:0 3px 12px #0001;
-}
-h2{color:#17365d;margin-top:0}
-label{font-weight:bold;font-size:14px}
-input{
- width:100%;padding:11px;border:1px solid #cbd5e1;
- border-radius:7px;margin:8px 0 16px;
-}
-button{
- padding:11px 16px;border:0;border-radius:7px;
- background:#2563eb;color:white;cursor:pointer;
- margin:4px;font-weight:bold;
-}
-button.secondary{background:#e2e8f0;color:#17365d}
-button:disabled{opacity:.45;cursor:not-allowed}
-.upload-grid{
- display:grid;grid-template-columns:1fr 1fr;gap:15px;
-}
-.upload-box{
- background:#f8fbff;border:1px dashed #9eb2cc;
- padding:16px;border-radius:10px;
-}
-.upload-box h3{margin-top:0;color:#17365d}
-#msg{color:#166534;font-size:13px;margin-top:10px}
-.report{
- background:white;padding:25px;
- overflow:auto;
-}
-.report-header{
- display:flex;align-items:center;gap:18px;
- border-bottom:2px solid #dce5f0;
- padding-bottom:17px;
-}
+
 .report-logo{
- max-width:100px;max-height:75px;object-fit:contain;
+ max-height:65px;
+ max-width:180px;
+ object-fit:contain;
 }
-.report-title{font-size:24px;font-weight:bold;color:#17365d}
+
+.report-title{
+ font-size:23px;
+ font-weight:bold;
+ color:#174b7a;
+ margin:10px 0;
+}
+
 .meta{
- display:grid;grid-template-columns:1fr 1fr;
- gap:10px;margin-top:12px;font-size:13px;
+ font-size:13px;
+ color:#475569;
+ margin:5px 0;
 }
-.section{margin-top:25px}
-.section h3{color:#1e40af}
-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
-th,td{border:1px solid #d5deea;padding:10px;text-align:left}
-th{background:#e8eff8;color:#17365d}
-td:last-child,th:last-child{text-align:right;width:100px}
-.total{font-weight:bold;background:#f1f5f9}
-.footer{
- border-top:1px solid #ddd;margin-top:25px;
- padding-top:12px;text-align:right;
- color:#64748b;font-size:11px;
+
+.status-box{
+ background:#fff7ed;
+ border-left:5px solid #ea580c;
+ padding:12px 15px;
+ margin:15px 0;
+ border-radius:5px;
 }
-.small{font-size:12px;color:#64748b}
-@media(max-width:650px){
- .upload-grid,.meta{grid-template-columns:1fr}
- .report{padding:14px}
- .report-title{font-size:20px}
+
+.status-box.good{
+ background:#f0fdf4;
+ border-color:#16a34a;
+}
+
+.status-box.warning{
+ background:#f8fafc;
+ border-color:#64748b;
+}
+
+.status-label{
+ font-size:12px;
+ font-weight:bold;
+ color:#475569;
+ margin-bottom:8px;
+}
+
+.status-code{
+ font-size:17px;
+ font-weight:bold;
+ color:#b45309;
+}
+
+.status-count{
+ font-size:23px;
+ font-weight:bold;
+ color:#b45309;
+}
+
+.status-note{
+ font-size:12px;
+ color:#64748b;
+ margin-top:5px;
+}
+
+table{
+ width:100%;
+ border-collapse:collapse;
+ margin-top:12px;
+}
+
+th,td{
+ border:1px solid #dbe2ea;
+ padding:10px;
+ text-align:left;
+ font-size:13px;
+}
+
+th{
+ background:#174b7a;
+ color:white;
+}
+
+td:last-child,th:last-child{text-align:right}
+
+tr:nth-child(even){background:#f8fafc}
+
+.section-title{
+ font-size:19px;
+ color:#174b7a;
+ margin:0 0 5px;
+}
+
+.actions{margin:15px 0}
+
+/* LIVE CLOCK */
+
+.live-clock{
+ background:linear-gradient(135deg,#12345a,#1769aa);
+ color:white;
+ padding:18px;
+ border-radius:12px;
+ margin:15px 0 20px;
+ box-shadow:0 4px 14px #00000018;
+}
+
+.clock-heading{
+ font-size:16px;
+ font-weight:bold;
+ margin-bottom:5px;
+}
+
+.clock-date{
+ font-size:13px;
+ opacity:.85;
+ margin-bottom:15px;
+}
+
+.clock-grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+}
+
+.clock-item{
+ background:#ffffff18;
+ border:1px solid #ffffff35;
+ border-radius:9px;
+ padding:13px;
+}
+
+.clock-label{
+ font-size:12px;
+ opacity:.85;
+ margin-bottom:7px;
+}
+
+.clock-time{
+ font-size:25px;
+ font-weight:bold;
+ font-variant-numeric:tabular-nums;
+}
+
+.clock-zone{
+ font-size:11px;
+ opacity:.8;
+ margin-top:5px;
+}
+
+@media(max-width:700px){
+ body{padding:10px}
+ .uploads{grid-template-columns:1fr}
+ .report{padding:13px}
+ th,td{padding:7px;font-size:12px}
+}
+
+@media(max-width:500px){
+ .clock-time{font-size:19px}
 }
 </style>
 </head>
 
 <body>
-<div class="wrap">
 
-<div class="header">
- <h1>ELK Smart DLR Report Generator</h1>
- <p>Smart CSV Report Generator | DLR MNO & DLR IPTSP</p>
+<div class="container">
+
+<h1>ELK Smart DLR Report Generator</h1>
+
+<!-- DHAKA LIVE CLOCK -->
+
+<div class="live-clock">
+
+ <div class="clock-heading">📍 Dhaka, Bangladesh</div>
+
+ <div class="clock-date" id="dhakaDate">
+  Loading date...
+ </div>
+
+ <div class="clock-grid">
+
+  <div class="clock-item">
+   <div class="clock-label">12-HOUR CLOCK</div>
+   <div class="clock-time" id="clock12">--:--:-- --</div>
+   <div class="clock-zone">AM / PM</div>
+  </div>
+
+  <div class="clock-item">
+   <div class="clock-label">24-HOUR CLOCK</div>
+   <div class="clock-time" id="clock24">--:--:--</div>
+   <div class="clock-zone">Bangladesh Time (UTC+6)</div>
+  </div>
+
+ </div>
 </div>
 
-<div class="card">
- <h2>Report Settings</h2>
+<!-- INPUT PANEL -->
+
+<div class="panel">
 
  <label>Reporter Name</label>
- <input id="enteredBy"
-        list="reporterNames"
-        placeholder="Search or enter reporter name"
-        autocomplete="off">
+
+ <input
+  id="reporter"
+  list="reporterNames"
+  placeholder="Search or enter reporter name"
+ >
+
  <datalist id="reporterNames"></datalist>
 
- <label>Optional Logo / Picture</label>
- <input id="logo" type="file" accept="image/*">
+ <label>Upload Company Logo (Optional)</label>
 
- <p class="small">
- Reporter names are saved in this browser for future use.
- </p>
-</div>
+ <input type="file" id="logoInput" accept="image/*">
 
-<div class="card">
- <h2>Upload CSV Files</h2>
+ <div class="uploads" style="margin-top:20px">
 
- <div class="upload-grid">
-  <div class="upload-box">
-   <h3>DLR MNO</h3>
-   <p class="small">Upload MNO DLR CSV file.</p>
-   <input id="mnoFile" type="file" accept=".csv,text/csv">
+  <div class="upload-card">
+   <h3>DLR MNO CSV</h3>
+   <input type="file" id="mnoFile" accept=".csv">
+   <p id="mnoFileName" class="meta">No file selected</p>
   </div>
 
-  <div class="upload-box">
-   <h3>DLR IPTSP</h3>
-   <p class="small">Upload IPTSP DLR CSV file.</p>
-   <input id="iptspFile" type="file" accept=".csv,text/csv">
+  <div class="upload-card">
+   <h3>DLR IPTSP CSV</h3>
+   <input type="file" id="iptspFile" accept=".csv">
+   <p id="iptspFileName" class="meta">No file selected</p>
   </div>
+
  </div>
 
- <button onclick="generate()">Generate Report</button>
- <button class="secondary" onclick="resetAll()">Reset</button>
-
- <div id="msg"></div>
-</div>
-
-<div class="card">
- <h2>Download Options</h2>
-
- <button id="pngBtn" onclick="downloadImage('png')" disabled>
- Download PNG
- </button>
-
- <button id="jpgBtn" onclick="downloadImage('jpg')" disabled>
- Download JPG
- </button>
-
- <button id="screenBtn" onclick="openScreenshot()" disabled>
- Screenshot
- </button>
-
- <button id="mnoBtn" onclick="downloadCSV('MNO')" disabled>
- MNO CSV
- </button>
-
- <button id="iptspBtn" onclick="downloadCSV('IPTSP')" disabled>
- IPTSP CSV
- </button>
-</div>
-
-<div class="card">
- <h2>Report Preview</h2>
- <div id="report" class="report">
-  Upload CSV file and generate report.
+ <div class="actions">
+  <button onclick="generate()">Generate Report</button>
+  <button class="secondary" onclick="resetAll()">Reset</button>
  </div>
+
 </div>
+
+<!-- DOWNLOAD PANEL -->
+
+<div class="panel">
+
+ <h3>Download Report</h3>
+
+ <button class="green" id="pngBtn" onclick="downloadImage('png')" disabled>
+  Download PNG
+ </button>
+
+ <button class="green" id="jpgBtn" onclick="downloadImage('jpeg')" disabled>
+  Download JPG
+ </button>
+
+ <button class="orange" id="screenBtn" onclick="openScreenshot()" disabled>
+  Screenshot
+ </button>
+
+ <button class="secondary" id="mnoCsvBtn" onclick="downloadCSV('MNO')" disabled>
+  MNO CSV
+ </button>
+
+ <button class="secondary" id="iptspCsvBtn" onclick="downloadCSV('IPTSP')" disabled>
+  IPTSP CSV
+ </button>
+
+</div>
+
+<!-- REPORT AREA -->
+
+<div id="report" class="report" style="display:none"></div>
 
 </div>
 
 <script>
-let data={MNO:[],IPTSP:[]};
-let reportNames={MNO:'',IPTSP:''};
-let reportTimes={MNO:null,IPTSP:null};
-let logoData='';
 
-/* Reporter Name Save and Search */
+/* ===============================
+   GLOBAL DATA
+================================ */
 
-const reporterInput=document.getElementById('enteredBy');
-const reporterList=document.getElementById('reporterNames');
+let data={
+ MNO:[],
+ IPTSP:[]
+};
+
+let reportNames={
+ MNO:"",
+ IPTSP:""
+};
+
+let reportTimes={
+ MNO:null,
+ IPTSP:null
+};
+
+let logoData="";
+
+const $=id=>document.getElementById(id);
+
+
+/* ===============================
+   DHAKA LIVE CLOCK
+================================ */
+
+function updateDhakaClock(){
+
+ const now=new Date();
+
+ const dateOptions={
+  timeZone:"Asia/Dhaka",
+  weekday:"long",
+  day:"2-digit",
+  month:"long",
+  year:"numeric"
+ };
+
+ const time12Options={
+  timeZone:"Asia/Dhaka",
+  hour:"2-digit",
+  minute:"2-digit",
+  second:"2-digit",
+  hour12:true
+ };
+
+ const time24Options={
+  timeZone:"Asia/Dhaka",
+  hour:"2-digit",
+  minute:"2-digit",
+  second:"2-digit",
+  hour12:false
+ };
+
+ $("dhakaDate").textContent=
+  new Intl.DateTimeFormat("en-US",dateOptions).format(now);
+
+ $("clock12").textContent=
+  new Intl.DateTimeFormat("en-US",time12Options).format(now);
+
+ $("clock24").textContent=
+  new Intl.DateTimeFormat("en-GB",time24Options).format(now);
+}
+
+updateDhakaClock();
+
+setInterval(updateDhakaClock,1000);
+
+
+/* ===============================
+   REPORTER NAME SAVE
+================================ */
 
 function loadReporterNames(){
- let names=JSON.parse(
-  localStorage.getItem('elkReporterNames')||'[]'
+
+ const names=JSON.parse(
+  localStorage.getItem("elkReporterNames")||"[]"
  );
 
- reporterList.innerHTML='';
+ $("reporterNames").innerHTML="";
 
- names.forEach(name=>{
-  let option=document.createElement('option');
+ names.sort().forEach(name=>{
+
+  const option=document.createElement("option");
+
   option.value=name;
-  reporterList.appendChild(option);
+
+  $("reporterNames").appendChild(option);
+
  });
 }
 
 function saveReporterName(){
- let name=reporterInput.value.trim();
+
+ const name=$("reporter").value.trim();
+
  if(!name)return;
 
  let names=JSON.parse(
-  localStorage.getItem('elkReporterNames')||'[]'
+  localStorage.getItem("elkReporterNames")||"[]"
  );
 
  if(!names.some(n=>n.toLowerCase()===name.toLowerCase())){
+
   names.push(name);
-  localStorage.setItem('elkReporterNames',JSON.stringify(names));
+
+  localStorage.setItem(
+   "elkReporterNames",
+   JSON.stringify(names)
+  );
  }
 
  loadReporterNames();
 }
 
-reporterInput.addEventListener('change',saveReporterName);
-reporterInput.addEventListener('blur',saveReporterName);
-
-loadReporterNames();
+$("reporter").addEventListener("change",saveReporterName);
+$("reporter").addEventListener("blur",saveReporterName);
 
 
-/* CSV Field Helpers */
+/* ===============================
+   CSV FIELD HELPERS
+================================ */
 
-function normKey(s){
- return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+function normKey(k){
+
+ return String(k||"")
+  .toLowerCase()
+  .replace(/[^a-z0-9]/g,"");
 }
 
-function field(row,names){
- let keys=Object.keys(row||{});
+function field(row,keys){
 
- for(let name of names){
-  let found=keys.find(k=>normKey(k)===normKey(name));
+ const rowKeys=Object.keys(row);
 
-  if(found!==undefined && row[found]!=='' && row[found]!=null){
+ for(const wanted of keys){
+
+  const found=rowKeys.find(
+   k=>normKey(k)===normKey(wanted)
+  );
+
+  if(
+   found!==undefined &&
+   row[found]!==null &&
+   row[found]!==undefined &&
+   String(row[found]).trim()!==""
+  ){
+
    return row[found];
+
   }
  }
 
- return '';
+ return "";
 }
 
+function getStatus(row){
 
-/* Timestamp Detection */
+ return String(field(row,[
+  "status",
+  "statusCode",
+  "status_code",
+  "errorCode",
+  "error_code",
+  "responseCode",
+  "response_code",
+  "mnoResponseCode",
+  "code"
+ ])).trim();
+}
+
+function getDescription(row){
+
+ return String(field(row,[
+  "description",
+  "errorDescription",
+  "error_description",
+  "statusDescription",
+  "status_description",
+  "message",
+  "errorMessage",
+  "error_message"
+ ])).trim()||"N/A";
+}
 
 function getTimestamp(row){
+
  return field(row,[
-  '@timestamp',
-  'timestamp',
-  'time',
-  'datetime',
-  'dateTime',
-  'createdAt',
-  'eventTime'
+  "@timestamp",
+  "timestamp",
+  "time",
+  "datetime",
+  "createdAt",
+  "eventTime",
+  "event_time"
  ]);
 }
 
 function validDate(value){
- if(!value)return null;
+
+ if(value===null||value===undefined||value==="")return null;
 
  let d=new Date(value);
+
  return isNaN(d.getTime())?null:d;
 }
 
-function formatDate(date){
- return date?date.toLocaleString():'Not Available';
+
+/* ===============================
+   DATE FORMAT
+================================ */
+
+function formatDate(d){
+
+ const months=[
+  "Jan","Feb","Mar","Apr","May","Jun",
+  "Jul","Aug","Sep","Oct","Nov","Dec"
+ ];
+
+ const pad=n=>String(n).padStart(2,"0");
+
+ return months[d.getMonth()]+" "+
+  pad(d.getDate())+", "+
+  d.getFullYear()+" @ "+
+  pad(d.getHours())+":"+
+  pad(d.getMinutes())+":"+
+  pad(d.getSeconds())+"."+
+  String(d.getMilliseconds()).padStart(3,"0");
 }
 
 
-/* Status Code Detection */
+/* ===============================
+   CSV PARSING
+================================ */
 
-function getStatus(row){
+function parseFile(file,type){
 
- let value=field(row,[
-  'statusCode',
-  'status_code',
-  'status code',
-  'errorCode',
-  'error_code',
-  'responseCode',
-  'response_code',
-  'code'
- ]);
-
- if(value!=='')return String(value).trim();
-
- let msg=String(
-  field(row,['message','log','event.original'])||''
- );
-
- let match=msg.match(
-  /["']?(?:statusCode|status_code|errorCode|responseCode)["']?\s*[:=]\s*["']?([0-9A-Za-z_-]+)/i
- );
-
- return match?match[1]:'Unknown';
-}
-
-
-/* Description Detection */
-
-function getDescription(row){
-
- let value=field(row,[
-  'errorDescription',
-  'description',
-  'error_description',
-  'reason',
-  'statusDescription'
- ]);
-
- if(value!=='')return String(value).trim();
-
- let msg=String(
-  field(row,['message','log','event.original'])||''
- );
-
- let match=msg.match(
-  /["']?errordescription["']?\s*[:=]\s*["']([^"']*)/i
- );
-
- if(match)return match[1].trim();
-
- let match2=msg.match(
-  /(?:error\s*description|description)\s*[:=]\s*([^,;}\]]+)/i
- );
-
- return match2?
-  match2[1].replace(/^["']|["']$/g,'').trim():
-  'Not Available';
-}
-
-
-/* CSV Parsing */
-
-function parseFile(file){
  return new Promise((resolve,reject)=>{
+
   Papa.parse(file,{
+
    header:true,
    skipEmptyLines:true,
-   complete:result=>resolve(result.data||[]),
-   error:error=>reject(error)
+
+   complete:function(result){
+
+    if(!result.data||!result.data.length){
+
+     reject(new Error("CSV file is empty"));
+
+     return;
+    }
+
+    const rows=result.data.filter(
+     r=>getStatus(r)!==""
+    );
+
+    if(!rows.length){
+
+     reject(new Error(
+      "Status Code column not found or empty"
+     ));
+
+     return;
+    }
+
+    const dates=rows
+     .map(r=>validDate(getTimestamp(r)))
+     .filter(d=>d!==null)
+     .sort((a,b)=>a-b);
+
+    data[type]=rows;
+
+    reportNames[type]=file.name.replace(/\.csv$/i,"");
+
+    reportTimes[type]=dates.length?
+     {
+      start:dates[0],
+      end:dates[dates.length-1]
+     }:null;
+
+    resolve();
+
+   },
+
+   error:reject
+
   });
+
  });
+
 }
 
 
-/* Group Status + Description + Count */
+/* ===============================
+   SUMMARY
+================================ */
 
 function summarize(rows){
 
- let groups={};
- let dates=[];
+ const map={};
 
  rows.forEach(row=>{
 
-  let status=getStatus(row);
-  let description=getDescription(row);
+  const code=getStatus(row);
 
-  let key=status+'|||'+description;
+  const desc=getDescription(row);
 
-  groups[key]=(groups[key]||0)+1;
+  const key=code+"|||"+desc;
 
-  let date=validDate(getTimestamp(row));
+  if(!map[key]){
 
-  if(date)dates.push(date);
+   map[key]={
+    code:code,
+    description:desc,
+    count:0
+   };
 
- });
+  }
 
- let summary=Object.entries(groups).map(([key,count])=>{
-
-  let parts=key.split('|||');
-
-  return {
-   status:parts[0],
-   description:parts.slice(1).join('|||'),
-   count:count
-  };
+  map[key].count++;
 
  });
 
- summary.sort((a,b)=>
-  a.status.localeCompare(b.status,undefined,{numeric:true})
+ return Object.values(map).sort(
+  (a,b)=>b.count-a.count
  );
 
- dates.sort((a,b)=>a-b);
-
- return {
-  summary:summary,
-  start:dates.length?dates[0]:null,
-  end:dates.length?dates[dates.length-1]:null
- };
 }
 
 
-/* Generate Report */
+/* ===============================
+   REPORT STATUS
+   COMPARE WITH SUCCESS 1000
+================================ */
+
+function getReportStatus(rows){
+
+ const byCode={};
+
+ rows.forEach(row=>{
+
+  const code=getStatus(row);
+
+  if(!code)return;
+
+  byCode[code]=(byCode[code]||0)+1;
+
+ });
+
+ if(!Object.prototype.hasOwnProperty.call(byCode,"1000")){
+
+  return {
+   type:"warning",
+   message:"Success Code 1000 not found. Comparison unavailable."
+  };
+
+ }
+
+ const successCount=byCode["1000"];
+
+ const errors=Object.entries(byCode)
+
+  .filter(([code,count])=>
+   code!=="1000"&&count>successCount
+  )
+
+  .sort((a,b)=>b[1]-a[1]);
+
+ if(!errors.length){
+
+  return {
+   type:"good",
+   message:"No Error Code exceeds Success Code 1000.",
+   successCount:successCount
+  };
+
+ }
+
+ const [code,count]=errors[0];
+
+ const descriptionRow=rows.find(
+  r=>getStatus(r)===code
+ );
+
+ return {
+
+  type:"error",
+
+  code:code,
+
+  count:count,
+
+  description:descriptionRow?
+   getDescription(descriptionRow):"N/A",
+
+  successCount:successCount
+
+ };
+
+}
+
+
+/* ===============================
+   ESCAPE HTML
+================================ */
+
+function esc(value){
+
+ return String(value??"").replace(/[&<>"']/g,c=>({
+
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
+
+ }[c]));
+
+}
+
+
+/* ===============================
+   REPORT SECTION
+================================ */
+
+function makeSection(type){
+
+ const rows=data[type];
+
+ if(!rows.length)return "";
+
+ const summary=summarize(rows);
+
+ const status=getReportStatus(rows);
+
+ const time=reportTimes[type];
+
+ const timeText=time?
+
+  formatDate(time.start)+" - "+formatDate(time.end):
+
+  "Timestamp not found";
+
+ let statusHTML="";
+
+ if(status.type==="error"){
+
+  statusHTML=`
+
+   <div class="status-box">
+
+    <div class="status-label">
+     REPORT STATUS
+    </div>
+
+    <div class="status-code">
+     Error Code: ${esc(status.code)} — ${esc(status.description)}
+    </div>
+
+    <div class="status-count">
+     ${status.count.toLocaleString()}
+    </div>
+
+    <div class="status-note">
+     Highest Error Count | Success Code 1000:
+     ${status.successCount.toLocaleString()}
+    </div>
+
+   </div>
+
+  `;
+
+ }else if(status.type==="good"){
+
+  statusHTML=`
+
+   <div class="status-box good">
+
+    <div class="status-label">
+     REPORT STATUS
+    </div>
+
+    <b>${esc(status.message)}</b>
+
+    <div class="status-note">
+     Success Code 1000 Count:
+     ${status.successCount.toLocaleString()}
+    </div>
+
+   </div>
+
+  `;
+
+ }else{
+
+  statusHTML=`
+
+   <div class="status-box warning">
+
+    <div class="status-label">
+     REPORT STATUS
+    </div>
+
+    <b>${esc(status.message)}</b>
+
+   </div>
+
+  `;
+
+ }
+
+ return `
+
+ <div style="margin-bottom:30px">
+
+  <h2 class="section-title">
+   ${esc(reportNames[type])}
+  </h2>
+
+  <div class="meta">
+   <b>Report Type:</b> DLR ${type}
+  </div>
+
+  <div class="meta">
+   <b>Reporter:</b>
+   ${esc($("reporter").value.trim()||"N/A")}
+  </div>
+
+  <div class="meta">
+   <b>Time:</b> ${esc(timeText)}
+  </div>
+
+  ${statusHTML}
+
+  <table>
+
+   <thead>
+
+    <tr>
+     <th>Status Code</th>
+     <th>Description</th>
+     <th>Count</th>
+    </tr>
+
+   </thead>
+
+   <tbody>
+
+    ${summary.map(item=>`
+
+     <tr>
+
+      <td>${esc(item.code)}</td>
+
+      <td>${esc(item.description)}</td>
+
+      <td>${item.count.toLocaleString()}</td>
+
+     </tr>
+
+    `).join("")}
+
+   </tbody>
+
+  </table>
+
+ </div>
+
+ `;
+
+}
+
+
+/* ===============================
+   GENERATE REPORT
+================================ */
 
 async function generate(){
 
- let mno=document.getElementById('mnoFile').files[0];
- let iptsp=document.getElementById('iptspFile').files[0];
-
- if(!mno&&!iptsp){
-  document.getElementById('msg').textContent=
-   'Please upload at least one CSV file.';
-  return;
- }
-
  try{
 
-  data={MNO:[],IPTSP:[]};
-  reportNames={MNO:'',IPTSP:''};
-  reportTimes={MNO:null,IPTSP:null};
+  saveReporterName();
+
+  const mno=$("mnoFile").files[0];
+
+  const iptsp=$("iptspFile").files[0];
+
+  if(!mno&&!iptsp){
+
+   alert("Please upload at least one CSV file.");
+
+   return;
+  }
+
+  data={
+   MNO:[],
+   IPTSP:[]
+  };
+
+  reportNames={
+   MNO:"",
+   IPTSP:""
+  };
+
+  reportTimes={
+   MNO:null,
+   IPTSP:null
+  };
 
   if(mno){
 
-   let result=summarize(await parseFile(mno));
-
-   data.MNO=result.summary;
-   reportNames.MNO=mno.name.replace(/\.csv$/i,'');
-   reportTimes.MNO={
-    start:result.start,
-    end:result.end
-   };
+   await parseFile(mno,"MNO");
 
   }
 
   if(iptsp){
 
-   let result=summarize(await parseFile(iptsp));
-
-   data.IPTSP=result.summary;
-   reportNames.IPTSP=iptsp.name.replace(/\.csv$/i,'');
-   reportTimes.IPTSP={
-    start:result.start,
-    end:result.end
-   };
+   await parseFile(iptsp,"IPTSP");
 
   }
 
-  saveReporterName();
   render();
 
-  document.getElementById('msg').textContent=
-   'Report generated successfully.';
+  ["pngBtn","jpgBtn","screenBtn"].forEach(
+   id=>$(id).disabled=false
+  );
 
-  document.getElementById('pngBtn').disabled=false;
-  document.getElementById('jpgBtn').disabled=false;
-  document.getElementById('screenBtn').disabled=false;
+  $("mnoCsvBtn").disabled=!data.MNO.length;
 
-  document.getElementById('mnoBtn').disabled=!mno;
-  document.getElementById('iptspBtn').disabled=!iptsp;
+  $("iptspCsvBtn").disabled=!data.IPTSP.length;
 
  }catch(error){
 
-  document.getElementById('msg').textContent=
-   'Error: '+error.message;
+  alert("Error: "+error.message);
 
  }
 
 }
 
 
-/* HTML Escape */
-
-function esc(value){
- return String(value??'').replace(/[&<>"']/g,c=>({
-  '&':'&amp;',
-  '<':'&lt;',
-  '>':'&gt;',
-  '"':'&quot;',
-  "'":'&#39;'
- }[c]));
-}
-
-
-/* Report Section */
-
-function makeSection(type){
-
- let items=data[type];
-
- if(!items.length)return '';
-
- let total=items.reduce((sum,item)=>sum+item.count,0);
-
- return `
- <div class="section">
-
- <h3>${type==='MNO'?'DLR MNO':'DLR IPTSP'}</h3>
-
- <div><b>Report Title:</b> ${esc(reportNames[type])}</div>
-
- <div class="meta">
-  <div><b>Start Time:</b>
-  ${formatDate(reportTimes[type]?.start)}</div>
-
-  <div><b>End Time:</b>
-  ${formatDate(reportTimes[type]?.end)}</div>
- </div>
-
- <table>
- <thead>
- <tr>
-  <th>Status Code</th>
-  <th>Description</th>
-  <th>Count</th>
- </tr>
- </thead>
-
- <tbody>
-
- ${items.map(item=>`
- <tr>
-  <td>${esc(item.status)}</td>
-  <td>${esc(item.description)}</td>
-  <td>${item.count.toLocaleString()}</td>
- </tr>
- `).join('')}
-
- <tr class="total">
-  <th colspan="2">Total Records</th>
-  <th>${total.toLocaleString()}</th>
- </tr>
-
- </tbody>
- </table>
- </div>
- `;
-}
-
-
-/* Render Report */
+/* ===============================
+   RENDER REPORT
+================================ */
 
 function render(){
 
- let entered=esc(
-  reporterInput.value.trim()||'Not Provided'
- );
+ let html="";
 
- let logo=logoData?
-  `<img class="report-logo" src="${logoData}" alt="Logo">`:
-  '';
+ if(logoData){
 
- document.getElementById('report').innerHTML=`
+  html+=`
 
- <div id="reportContent">
+   <div style="margin-bottom:15px">
 
- <div class="report-header">
+    <img class="report-logo" src="${logoData}">
 
- ${logo}
+   </div>
 
- <div>
-  <div class="report-title">ELK DLR Summary Report</div>
+  `;
 
-  <div style="margin-top:8px">
-   <b>Report Entered By:</b> ${entered}
-  </div>
+ }
 
-  <div style="margin-top:6px;font-size:13px">
-   <b>Report Generated:</b>
-   ${new Date().toLocaleString()}
-  </div>
+ if(data.MNO.length){
 
- </div>
- </div>
+  html+=makeSection("MNO");
 
- ${makeSection('MNO')}
+ }
 
- ${makeSection('IPTSP')}
+ if(data.IPTSP.length){
 
- <div class="footer">
- ELK Smart DLR Report Generator
- </div>
+  html+=makeSection("IPTSP");
 
- </div>
- `;
+ }
+
+ $("report").innerHTML=html;
+
+ $("report").style.display="block";
+
+ window.scrollTo({
+  top:$("report").offsetTop-15,
+  behavior:"smooth"
+ });
+
 }
 
 
-/* Logo Upload */
+/* ===============================
+   LOGO UPLOAD
+================================ */
 
-document.getElementById('logo').addEventListener('change',event=>{
+$("logoInput").addEventListener("change",function(e){
 
- let file=event.target.files[0];
+ const file=e.target.files[0];
 
  if(!file)return;
 
- let reader=new FileReader();
+ const reader=new FileReader();
 
  reader.onload=()=>{
+
   logoData=reader.result;
 
-  if(data.MNO.length||data.IPTSP.length){
-   render();
-  }
  };
 
  reader.readAsDataURL(file);
@@ -598,128 +1068,152 @@ document.getElementById('logo').addEventListener('change',event=>{
 });
 
 
-/* Reporter Change */
+/* ===============================
+   FILE NAME DISPLAY
+================================ */
 
-reporterInput.addEventListener('change',()=>{
+$("mnoFile").addEventListener("change",function(){
 
- saveReporterName();
+ $("mnoFileName").textContent=
+  this.files[0]?.name||"No file selected";
 
- if(data.MNO.length||data.IPTSP.length){
-  render();
- }
+});
+
+$("iptspFile").addEventListener("change",function(){
+
+ $("iptspFileName").textContent=
+  this.files[0]?.name||"No file selected";
 
 });
 
 
-/* PNG / JPG Download */
+/* ===============================
+   PNG / JPG DOWNLOAD
+================================ */
 
 async function downloadImage(format){
 
- let element=document.getElementById('reportContent');
+ const report=$("report");
 
- if(!element)return;
+ if(!report.innerHTML)return;
 
- saveReporterName();
+ const canvas=await html2canvas(report,{
 
- let canvas=await html2canvas(element,{
   scale:2,
-  backgroundColor:'#ffffff',
+
+  backgroundColor:"#ffffff",
+
   useCORS:true
+
  });
 
- let mime=format==='jpg'?
-  'image/jpeg':'image/png';
+ const link=document.createElement("a");
 
- let extension=format==='jpg'?'jpg':'png';
+ link.download="ELK_DLR_Report."+
+  (format==="jpeg"?"jpg":"png");
 
- let link=document.createElement('a');
-
- link.download='ELK_DLR_Report.'+extension;
-
- link.href=canvas.toDataURL(mime,0.95);
+ link.href=canvas.toDataURL(
+  "image/"+format,
+  0.95
+ );
 
  link.click();
 
 }
 
 
-/* Screenshot */
+/* ===============================
+   SCREENSHOT
+================================ */
 
 async function openScreenshot(){
 
- let element=document.getElementById('reportContent');
+ const canvas=await html2canvas($("report"),{
 
- if(!element)return;
-
- let tab=window.open('','_blank');
-
- if(!tab){
-  alert('Please allow pop-ups for this website.');
-  return;
- }
-
- let canvas=await html2canvas(element,{
   scale:2,
-  backgroundColor:'#ffffff',
+
+  backgroundColor:"#ffffff",
+
   useCORS:true
+
  });
 
- let image=canvas.toDataURL('image/png');
+ const image=canvas.toDataURL("image/png");
 
- tab.document.write(`
- <html>
- <head>
- <title>ELK DLR Report Screenshot</title>
- <style>
- body{margin:0;background:#eee;text-align:center}
- img{max-width:100%;height:auto}
- </style>
- </head>
- <body>
- <img src="${image}">
- </body>
- </html>
- `);
+ const win=window.open();
 
- tab.document.close();
+ if(win){
+
+  win.document.write(`
+
+   <html>
+
+   <head>
+    <title>DLR Report Screenshot</title>
+   </head>
+
+   <body style="margin:0;text-align:center;background:#eee">
+
+    <img src="${image}" style="max-width:100%;height:auto">
+
+   </body>
+
+   </html>
+
+  `);
+
+  win.document.close();
+
+ }else{
+
+  alert("Please allow pop-ups for this website.");
+
+ }
 
 }
 
 
-/* CSV Download */
+/* ===============================
+   CSV DOWNLOAD
+================================ */
 
 function downloadCSV(type){
 
- let items=data[type];
+ if(!data[type].length)return;
 
- if(!items.length)return;
+ const summary=summarize(data[type]);
 
- let rows=[
-  ['Status Code','Description','Count'],
-  ...items.map(item=>[
-   item.status,
-   item.description,
-   item.count
-  ])
- ];
+ const csv=Papa.unparse(
 
- let csv=rows.map(row=>
-  row.map(value=>
-   '"'+String(value??'').replace(/"/g,'""')+'"'
-  ).join(',')
- ).join('\r\n');
+  summary.map(item=>({
 
- let blob=new Blob(
-  ['\ufeff'+csv],
-  {type:'text/csv;charset=utf-8'}
+   "Status Code":item.code,
+
+   "Description":item.description,
+
+   "Count":item.count
+
+  }))
+
  );
 
- let url=URL.createObjectURL(blob);
+ const blob=new Blob(
 
- let link=document.createElement('a');
+  ["\uFEFF"+csv],
+
+  {type:"text/csv;charset=utf-8;"}
+
+ );
+
+ const url=URL.createObjectURL(blob);
+
+ const link=document.createElement("a");
 
  link.href=url;
- link.download=reportNames[type]+'.csv';
+
+ link.download=
+  (reportNames[type]||"DLR_"+type)+
+  "_Summary.csv";
 
  link.click();
 
@@ -728,11 +1222,59 @@ function downloadCSV(type){
 }
 
 
-/* Reset */
+/* ===============================
+   RESET
+================================ */
 
 function resetAll(){
- location.reload();
+
+ data={
+  MNO:[],
+  IPTSP:[]
+ };
+
+ reportNames={
+  MNO:"",
+  IPTSP:""
+ };
+
+ reportTimes={
+  MNO:null,
+  IPTSP:null
+ };
+
+ logoData="";
+
+ [
+  "mnoFile",
+  "iptspFile",
+  "logoInput"
+ ].forEach(id=>$(id).value="");
+
+ $("mnoFileName").textContent="No file selected";
+
+ $("iptspFileName").textContent="No file selected";
+
+ $("report").innerHTML="";
+
+ $("report").style.display="none";
+
+ [
+  "pngBtn",
+  "jpgBtn",
+  "screenBtn",
+  "mnoCsvBtn",
+  "iptspCsvBtn"
+ ].forEach(id=>$(id).disabled=true);
+
 }
+
+
+/* ===============================
+   INITIALIZE
+================================ */
+
+loadReporterNames();
 
 </script>
 
