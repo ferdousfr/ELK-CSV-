@@ -2,342 +2,345 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpsHub - DLR Report Generator</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpsHub - DLR Report Generator</title>
 
-    <!-- External Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <style>
-        :root {
-            --primary: #5146e5;
-            --blue: #174e83;
-            --bg: #f5f7fc;
-            --border: #dce3ef;
-            --text: #20283b;
-        }
+<style>
+:root {
+    --primary: #5146e5;
+    --dark: #202b45;
+    --muted: #718096;
+    --border: #e1e7f0;
+    --background: #f5f7fc;
+    --success: #16834a;
+    --danger: #d04444;
+}
 
-        * {
-            box-sizing: border-box;
-        }
+* { box-sizing: border-box; }
 
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            font: 14px Arial, sans-serif;
-        }
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--dark);
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
 
-        button, input, select {
-            font: inherit;
-        }
+button, input { font: inherit; }
 
-        button {
-            cursor: pointer;
-        }
+.app {
+    display: flex;
+    min-height: 100vh;
+}
 
-        .app {
-            display: flex;
-            min-height: 100vh;
-        }
+.sidebar {
+    width: 220px;
+    background: #fff;
+    border-right: 1px solid var(--border);
+    padding: 24px 14px;
+    flex-shrink: 0;
+}
 
-        /* Sidebar */
-        .sidebar {
-            width: 215px;
-            background: #fff;
-            border-right: 1px solid var(--border);
-            padding: 20px 12px;
-            flex-shrink: 0;
-        }
+.brand {
+    color: #214c80;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.4;
+    margin: 0 10px 35px;
+}
 
-        .logo {
-            font-size: 17px;
-            font-weight: bold;
-            color: var(--blue);
-            margin-bottom: 35px;
-        }
+.nav {
+    padding: 13px 12px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    color: #586780;
+}
 
-        .nav {
-            padding: 12px;
-            margin-bottom: 5px;
-            border-radius: 7px;
-            color: #42516b;
-        }
+.nav.active {
+    background: #f0efff;
+    color: var(--primary);
+    font-weight: bold;
+}
 
-        .nav.active {
-            color: var(--primary);
-            background: #f0efff;
-            font-weight: bold;
-        }
+.main {
+    flex: 1;
+    min-width: 0;
+}
 
-        /* Main Layout */
-        .main {
-            flex: 1;
-            min-width: 0;
-        }
+.topbar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
 
-        .topbar {
-            background: #fff;
-            border-bottom: 1px solid var(--border);
-            padding: 18px 24px;
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
+.tabs {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 25px;
+    padding: 15px 25px;
+    overflow-x: auto;
+}
 
-        .tabs {
-            display: flex;
-            gap: 25px;
-            background: #fff;
-            padding: 15px 25px;
-            border-bottom: 1px solid var(--border);
-            overflow-x: auto;
-        }
+.tabs span {
+    white-space: nowrap;
+    color: #65728a;
+}
 
-        .tabs span {
-            white-space: nowrap;
-            color: #536078;
-        }
+.tabs .active {
+    color: var(--primary);
+    font-weight: bold;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 10px;
+}
 
-        .tabs .selected {
-            color: var(--primary);
-            font-weight: bold;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 10px;
-        }
+.content {
+    max-width: 1250px;
+    margin: auto;
+    padding: 25px;
+}
 
-        .content {
-            max-width: 1250px;
-            margin: auto;
-            padding: 25px;
-        }
+.page-title {
+    font-size: 25px;
+    margin: 0 0 22px;
+}
 
-        h2 {
-            margin-top: 0;
-            font-size: 23px;
-        }
+.card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(30,50,90,.035);
+}
 
-        /* Cards */
-        .card {
-            background: #fff;
-            border: 1px solid #e0e6f0;
-            border-radius: 14px;
-            margin-bottom: 20px;
-            box-shadow: 0 3px 10px #1c315008;
-        }
+.card-title {
+    padding: 17px 22px;
+    border-bottom: 1px solid #edf0f5;
+    font-weight: bold;
+    font-size: 15px;
+}
 
-        .card-title {
-            padding: 18px 24px;
-            border-bottom: 1px solid #edf0f6;
-            font-weight: bold;
-        }
+.card-body {
+    padding: 22px;
+}
 
-        .card-body {
-            padding: 24px;
-        }
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
+.field label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: bold;
+}
 
-        .field label {
-            display: block;
-            font-size: 12px;
-            color: #697893;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
+.field input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd5e4;
+    border-radius: 7px;
+    background: white;
+}
 
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cfd8e8;
-            border-radius: 7px;
-            background: #fff;
-            color: var(--text);
-        }
+.upload-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
 
-        input:focus, select:focus {
-            outline: 2px solid #d9d6ff;
-            border-color: var(--primary);
-        }
+.upload-box {
+    text-align: center;
+    padding: 25px 18px;
+    border: 1px dashed #bdc9dd;
+    border-radius: 10px;
+    background: #fbfcff;
+}
 
-        /* CSV Upload */
-        .upload-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
+.upload-box h3 {
+    margin: 0 0 10px;
+}
 
-        .upload-box {
-            border: 1px dashed #c9d3e6;
-            border-radius: 12px;
-            padding: 22px;
-            text-align: center;
-            background: #fcfdff;
-        }
+.upload-box input {
+    width: 100%;
+    margin-top: 12px;
+}
 
-        .upload-box h3 {
-            margin-top: 0;
-            font-size: 16px;
-        }
+.file-status {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 12px;
+    overflow-wrap: anywhere;
+}
 
-        .upload-box input {
-            margin-top: 12px;
-        }
+.btn {
+    padding: 11px 16px;
+    border: none;
+    border-radius: 7px;
+    background: var(--primary);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-        /* Buttons */
-        .actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 9px;
-            margin-top: 20px;
-        }
+.btn:hover { opacity: .88; }
 
-        .btn {
-            padding: 11px 17px;
-            background: var(--primary);
-            color: #fff;
-            border: 0;
-            border-radius: 7px;
-            font-weight: bold;
-        }
+.btn.secondary {
+    background: #edf0f7;
+    color: #34425e;
+}
 
-        .btn.secondary {
-            background: #edf0f8;
-            color: #35435e;
-        }
+.btn.danger {
+    background: #fff0f0;
+    color: #bd3535;
+}
 
-        .status {
-            color: #65738b;
-            font-size: 13px;
-            margin-top: 15px;
-        }
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 15px;
+}
 
-        /* Report Preview */
-        .report {
-            background: #fff;
-            padding: 35px;
-            color: #191919;
-            border: 1px solid #e0e4eb;
-        }
+.status-message {
+    color: var(--muted);
+    margin: 15px 0 0;
+    line-height: 1.5;
+}
 
-        .report-brand {
-            color: #999;
-            letter-spacing: 2px;
-            font-size: 15px;
-            margin-bottom: 20px;
-        }
+.report {
+    background: white;
+    color: #1c2433;
+    padding: 32px;
+    border: 1px solid #e0e5ed;
+}
 
-        .report h2 {
-            font: normal 38px Georgia, serif;
-            margin: 0 0 12px;
-        }
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
 
-        .report-period {
-            color: #888;
-            font-size: 20px;
-            margin-bottom: 25px;
-        }
+.report-logo {
+    max-width: 180px;
+    max-height: 55px;
+    object-fit: contain;
+}
 
-        .report-summary {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-            margin: 25px 0;
-            font-family: monospace;
-            font-weight: bold;
-        }
+.report-company {
+    color: #63718a;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    font-weight: bold;
+}
 
-        .report table {
-            border-collapse: collapse;
-            width: 100%;
-            font-family: monospace;
-        }
+.report h2 {
+    font-family: Georgia, serif;
+    font-size: 34px;
+    font-weight: normal;
+    margin: 0 0 10px;
+}
 
-        .report th,
-        .report td {
-            border: 2px solid #d2d7df;
-            padding: 12px;
-            text-align: left;
-        }
+.period {
+    color: #77839a;
+    font-size: 14px;
+    margin-bottom: 25px;
+    overflow-wrap: anywhere;
+}
 
-        .report th {
-            background: #eef0f5;
-        }
+.summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    margin: 22px 0;
+    font-family: monospace;
+    font-size: 16px;
+}
 
-        .report td:first-child {
-            font-weight: bold;
-            background: #f0f2f7;
-        }
+.summary strong { color: #1d2d4b; }
 
-        .report td:last-child,
-        .report th:last-child {
-            text-align: right;
-        }
+.report table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: monospace;
+}
 
-        .report-meta {
-            font: bold 17px/2 monospace;
-            margin-top: 30px;
-        }
+.report th,
+.report td {
+    padding: 12px;
+    border: 1px solid #d8deea;
+    text-align: left;
+}
 
-        .normal {
-            color: #247346;
-        }
+.report th {
+    background: #edf1f7;
+    font-weight: bold;
+}
 
-        /* Responsive Design */
-        @media (max-width: 850px) {
-            .sidebar {
-                display: none;
-            }
+.report td:last-child,
+.report th:last-child {
+    text-align: right;
+}
 
-            .grid,
-            .upload-grid {
-                grid-template-columns: 1fr;
-            }
+.report-meta {
+    margin-top: 28px;
+    font-family: monospace;
+    font-weight: bold;
+    line-height: 2;
+}
 
-            .content {
-                padding: 15px;
-            }
+.report-status {
+    color: var(--success);
+}
 
-            .report {
-                padding: 20px;
-            }
+.empty-row {
+    text-align: center !important;
+    color: #8993a5;
+}
 
-            .report h2 {
-                font-size: 28px;
-            }
+.small-note {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
 
-            .report-period {
-                font-size: 15px;
-            }
-
-            .report th,
-            .report td {
-                padding: 7px;
-                font-size: 12px;
-            }
-        }
-    </style>
+@media(max-width:850px) {
+    .sidebar { display: none; }
+    .content { padding: 14px; }
+    .grid, .upload-grid { grid-template-columns: 1fr; }
+    .report { padding: 18px; }
+    .report h2 { font-size: 25px; }
+    .report th, .report td {
+        padding: 8px 5px;
+        font-size: 11px;
+    }
+    .summary { gap: 13px; font-size: 13px; }
+}
+</style>
 </head>
 
 <body>
+
 <div class="app">
 
-    <!-- Sidebar -->
     <aside class="sidebar">
-        <div class="logo">
-            INFOZILLION<br>
-            TELETECH BD
-        </div>
-
+        <div class="brand">INFOZILLION<br>TELETECH BD</div>
         <div class="nav">Dashboard</div>
-        <div class="nav active">Daily Shift Report</div>
+        <div class="nav">Daily Shift Report</div>
         <div class="nav">9xxx Report</div>
         <div class="nav">1xxx Report</div>
         <div class="nav">4xx/5xx Report</div>
@@ -346,61 +349,53 @@
         <div class="nav">MNP Status Report</div>
     </aside>
 
-    <!-- Main Content -->
     <div class="main">
 
-        <!-- Topbar -->
         <header class="topbar">
-            <div>
-                Dashboard / <b>Daily Shift Report</b>
-            </div>
-
+            <div>Dashboard / <strong>DLR Report</strong></div>
             <div>
                 <span id="clock12"></span> |
                 <span id="clock24"></span>
             </div>
         </header>
 
-        <!-- Navigation Tabs -->
         <div class="tabs">
             <span>9xxx Report</span>
             <span>1xxx Report</span>
             <span>4xx/5xx Report</span>
-            <span class="selected">DLR Report</span>
+            <span class="active">DLR Report</span>
             <span>Delay Report</span>
         </div>
 
         <main class="content">
 
-            <h2>
-                DLR <span style="color:#6255eb">Report</span>
-            </h2>
+            <h1 class="page-title">
+                DLR <span style="color:#5146e5">Report Generator</span>
+            </h1>
 
             <!-- Monitoring Window -->
             <section class="card">
                 <div class="card-title">Monitoring Window</div>
-
                 <div class="card-body">
-                    Time range will be detected automatically from the
-                    <b>@timestamp</b> column of each uploaded CSV.
+                    <strong id="monitoringInfo">Not generated yet</strong>
+                    <p class="small-note">
+                        Monitoring window is automatically calculated
+                        from the earliest and latest values in the
+                        CSV @timestamp column.
+                    </p>
                 </div>
             </section>
 
             <!-- Report Information -->
             <section class="card">
                 <div class="card-title">Report Information</div>
-
                 <div class="card-body grid">
 
                     <div class="field">
                         <label>Reporter Name</label>
-
-                        <input
-                            id="reporter"
-                            list="reporterList"
-                            placeholder="Search or enter reporter name"
-                        >
-
+                        <input id="reporter"
+                               list="reporterList"
+                               placeholder="Enter reporter name">
                         <datalist id="reporterList"></datalist>
                     </div>
 
@@ -414,36 +409,24 @@
 
             <!-- CSV Upload -->
             <section class="card">
-                <div class="card-title">CSV Upload</div>
+                <div class="card-title">Upload DLR CSV Files</div>
 
                 <div class="card-body upload-grid">
 
                     <div class="upload-box">
-                        <h3>📁 DLR MNO CSV</h3>
-                        <p>Drop MNO DLR CSV or select file</p>
-
-                        <input
-                            type="file"
-                            id="mnoFile"
-                            accept=".csv"
-                        >
-
-                        <div class="status" id="mnoStatus">
+                        <h3>📁 DLR MNO</h3>
+                        <p class="small-note">Upload MNO CSV file</p>
+                        <input type="file" id="mnoFile" accept=".csv">
+                        <div class="file-status" id="mnoFileStatus">
                             No file selected
                         </div>
                     </div>
 
                     <div class="upload-box">
-                        <h3>📁 DLR IPTSP CSV</h3>
-                        <p>Drop IPTSP DLR CSV or select file</p>
-
-                        <input
-                            type="file"
-                            id="iptspFile"
-                            accept=".csv"
-                        >
-
-                        <div class="status" id="iptspStatus">
+                        <h3>📁 DLR IPTSP</h3>
+                        <p class="small-note">Upload IPTSP CSV file</p>
+                        <input type="file" id="iptspFile" accept=".csv">
+                        <div class="file-status" id="iptspFileStatus">
                             No file selected
                         </div>
                     </div>
@@ -451,88 +434,71 @@
                 </div>
             </section>
 
-            <!-- Report Generation and Downloads -->
+            <!-- Generate -->
             <section class="card">
+                <div class="card-title">Generate and Export Reports</div>
+
                 <div class="card-body">
 
-                    <button class="btn" onclick="generate('mno')">
-                        Generate MNO Report
-                    </button>
-
-                    <button class="btn" onclick="generate('iptsp')">
-                        Generate IPTSP Report
-                    </button>
-
                     <div class="actions">
-
-                        <button class="btn secondary" onclick="downloadImage('mno','png')">
-                            MNO PNG
+                        <button class="btn" onclick="generateReport('mno')">
+                            Generate MNO Report
                         </button>
 
-                        <button class="btn secondary" onclick="downloadImage('iptsp','png')">
-                            IPTSP PNG
+                        <button class="btn" onclick="generateReport('iptsp')">
+                            Generate IPTSP Report
                         </button>
-
-                        <button class="btn secondary" onclick="downloadImage('mno','jpg')">
-                            MNO JPG
-                        </button>
-
-                        <button class="btn secondary" onclick="downloadImage('iptsp','jpg')">
-                            IPTSP JPG
-                        </button>
-
-                        <button class="btn secondary" onclick="downloadPDF('mno')">
-                            MNO PDF
-                        </button>
-
-                        <button class="btn secondary" onclick="downloadPDF('iptsp')">
-                            IPTSP PDF
-                        </button>
-
-                        <button class="btn secondary" onclick="downloadCSV('mno')">
-                            MNO Summary CSV
-                        </button>
-
-                        <button class="btn secondary" onclick="downloadCSV('iptsp')">
-                            IPTSP Summary CSV
-                        </button>
-
-                        <button class="btn secondary" onclick="copyImage('mno')">
-                            Copy MNO Image
-                        </button>
-
-                        <button class="btn secondary" onclick="copyImage('iptsp')">
-                            Copy IPTSP Image
-                        </button>
-
                     </div>
 
-                    <p class="status" id="message"></p>
+                    <div class="actions">
+                        <button class="btn secondary" onclick="downloadImage('mno','png')">MNO PNG</button>
+                        <button class="btn secondary" onclick="downloadImage('mno','jpg')">MNO JPG</button>
+                        <button class="btn secondary" onclick="downloadPDF('mno')">MNO PDF</button>
+                        <button class="btn secondary" onclick="downloadCSV('mno')">MNO Summary CSV</button>
+                        <button class="btn secondary" onclick="copyImage('mno')">Copy MNO Image</button>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn secondary" onclick="downloadImage('iptsp','png')">IPTSP PNG</button>
+                        <button class="btn secondary" onclick="downloadImage('iptsp','jpg')">IPTSP JPG</button>
+                        <button class="btn secondary" onclick="downloadPDF('iptsp')">IPTSP PDF</button>
+                        <button class="btn secondary" onclick="downloadCSV('iptsp')">IPTSP Summary CSV</button>
+                        <button class="btn secondary" onclick="copyImage('iptsp')">Copy IPTSP Image</button>
+                    </div>
+
+                    <p id="message" class="status-message">
+                        Upload a CSV file to generate a report.
+                    </p>
+
                 </div>
             </section>
 
-            <!-- MNO Report Preview -->
+            <!-- MNO Preview -->
             <section class="card">
                 <div class="card-title">DLR MNO Report Preview</div>
-
                 <div class="card-body">
 
-                    <section class="report" id="mnoReport">
-
-                        <div class="report-brand">
-                            INFOZILLION TELETECH BD · SERVICE ASSURANCE
+                    <div class="report" id="mnoReport">
+                        <div class="report-header">
+                            <div class="report-company">
+                                INFOZILLION TELETECH BD<br>
+                                SERVICE ASSURANCE
+                            </div>
+                            <img class="report-logo"
+                                 id="mnoLogo"
+                                 alt=""
+                                 style="display:none">
                         </div>
 
                         <h2>DLR Report — MNO</h2>
-
-                        <div class="report-period" id="mnoPeriod">
-                            Monitoring Window
+                        <div class="period" id="mnoPeriod">
+                            Monitoring Window: Not available
                         </div>
 
-                        <div class="report-summary">
-                            <span>Total: <b id="mnoTotal">0</b></span>
-                            <span>Success: <b id="mnoSuccess">0</b></span>
-                            <span>Error: <b id="mnoErrors">0</b></span>
+                        <div class="summary">
+                            <span>Total: <strong id="mnoTotal">0</strong></span>
+                            <span>Success: <strong id="mnoSuccess">0</strong></span>
+                            <span>Error: <strong id="mnoErrors">0</strong></span>
                         </div>
 
                         <table>
@@ -543,49 +509,46 @@
                                     <th>Count</th>
                                 </tr>
                             </thead>
-
                             <tbody id="mnoRows">
-                                <tr>
-                                    <td colspan="3">No data loaded</td>
-                                </tr>
+                                <tr><td colspan="3" class="empty-row">No data loaded</td></tr>
                             </tbody>
                         </table>
 
                         <div class="report-meta">
-                            Reporter:
-                            <span class="reporterOut">Not specified</span>
-                            <br>
-
-                            Status :
-                            <span class="normal">Normal</span>
+                            Reporter: <span class="reporter-name">Not specified</span><br>
+                            Status: <span class="report-status">Normal</span>
                         </div>
+                    </div>
 
-                    </section>
                 </div>
             </section>
 
-            <!-- IPTSP Report Preview -->
+            <!-- IPTSP Preview -->
             <section class="card">
                 <div class="card-title">DLR IPTSP Report Preview</div>
-
                 <div class="card-body">
 
-                    <section class="report" id="iptspReport">
-
-                        <div class="report-brand">
-                            INFOZILLION TELETECH BD · SERVICE ASSURANCE
+                    <div class="report" id="iptspReport">
+                        <div class="report-header">
+                            <div class="report-company">
+                                INFOZILLION TELETECH BD<br>
+                                SERVICE ASSURANCE
+                            </div>
+                            <img class="report-logo"
+                                 id="iptspLogo"
+                                 alt=""
+                                 style="display:none">
                         </div>
 
                         <h2>DLR Report — IPTSP</h2>
-
-                        <div class="report-period" id="iptspPeriod">
-                            Monitoring Window
+                        <div class="period" id="iptspPeriod">
+                            Monitoring Window: Not available
                         </div>
 
-                        <div class="report-summary">
-                            <span>Total: <b id="iptspTotal">0</b></span>
-                            <span>Success: <b id="iptspSuccess">0</b></span>
-                            <span>Error: <b id="iptspErrors">0</b></span>
+                        <div class="summary">
+                            <span>Total: <strong id="iptspTotal">0</strong></span>
+                            <span>Success: <strong id="iptspSuccess">0</strong></span>
+                            <span>Error: <strong id="iptspErrors">0</strong></span>
                         </div>
 
                         <table>
@@ -596,24 +559,17 @@
                                     <th>Count</th>
                                 </tr>
                             </thead>
-
                             <tbody id="iptspRows">
-                                <tr>
-                                    <td colspan="3">No data loaded</td>
-                                </tr>
+                                <tr><td colspan="3" class="empty-row">No data loaded</td></tr>
                             </tbody>
                         </table>
 
                         <div class="report-meta">
-                            Reporter:
-                            <span class="reporterOut">Not specified</span>
-                            <br>
-
-                            Status :
-                            <span class="normal">Normal</span>
+                            Reporter: <span class="reporter-name">Not specified</span><br>
+                            Status: <span class="report-status">Normal</span>
                         </div>
+                    </div>
 
-                    </section>
                 </div>
             </section>
 
@@ -622,471 +578,619 @@
 </div>
 
 <script>
-    /* =========================================
-       1. BANGLADESH CLOCK
-    ========================================= */
 
-    function updateClock() {
-        const now = new Date();
+/* ==========================================
+   1. OFFICIAL ERROR CODE MAPPING
+   This is the ONLY source for descriptions.
+========================================== */
 
-        const options = {
-            timeZone: "Asia/Dhaka",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit"
-        };
-
-        document.getElementById("clock12").textContent =
-            new Intl.DateTimeFormat("en-US", {
-                ...options,
-                hour12: true
-            }).format(now);
-
-        document.getElementById("clock24").textContent =
-            new Intl.DateTimeFormat("en-GB", {
-                ...options,
-                hour12: false
-            }).format(now);
-    }
-
-    updateClock();
-    setInterval(updateClock, 1000);
-
-
-    /* =========================================
-       2. REPORTER NAME MEMORY
-    ========================================= */
-
-    const reporterInput = document.getElementById("reporter");
-    const reporterList = document.getElementById("reporterList");
-
-    function loadReporters() {
-        const names = JSON.parse(
-            localStorage.getItem("dlrReporters") || "[]"
-        );
-
-        reporterList.innerHTML = "";
-
-        names.forEach(name => {
-            const option = document.createElement("option");
-            option.value = name;
-            reporterList.appendChild(option);
-        });
-    }
-
-    reporterInput.addEventListener("change", () => {
-        const name = reporterInput.value.trim();
-
-        if (!name) return;
-
-        let names = JSON.parse(
-            localStorage.getItem("dlrReporters") || "[]"
-        );
-
-        if (!names.includes(name)) {
-            names.push(name);
-
-            localStorage.setItem(
-                "dlrReporters",
-                JSON.stringify(names)
-            );
-        }
-
-        loadReporters();
-    });
-
-    loadReporters();
+const DLR_ERROR_DESCRIPTIONS = {
+    "1000": "Success",
+    "1001": "IP Blacklist",
+    "1002": "Invalid Username",
+    "1003": "Invalid Password",
+    "1004": "Parameter missing",
+    "1005": "Invalid Parameter",
+    "1006": "CLI/Masking Invalid",
+    "1007": "Account Barred",
+    "1008": "Insufficient Balance",
+    "1009": "DND User",
+    "1010": "Invalid MSISDN",
+    "1011": "Duplicate Transaction ID",
+    "1012": "Message lengths exceed",
+    "1013": "No Request found",
+    "1014": "Delivery pending",
+    "1015": "TPS Limit Exceeded",
+    "1016": "Number Barred",
+    "1017": "API is not allowed for user",
+    "1018": "No Live Campaign",
+    "1019": "Messagebody Invalid",
+    "1020": "Internal Server Error",
+    "1021": "CLI/Masking Already Exists",
+    "1050": "Allowed campaigns limit exceeded",
+    "1051": "Allowed SMS quota is completed",
+    "1052": "Submission record not found",
+    "1053": "Invalid Transaction Id",
+    "1054": "MSISDN Limit Exceeded"
+};
 
 
-    /* =========================================
-       3. CSV PARSER
-    ========================================= */
+/* ==========================================
+   2. BANGLADESH CLOCK
+========================================== */
 
-    function parseCSV(text) {
-        text = text.replace(/^\uFEFF/, "");
+function updateClock() {
+    const now = new Date();
 
-        const firstLine = text.split(/\r?\n/)[0];
-
-        const delimiters = [",", ";", "\t", "|"];
-
-        const delimiter = delimiters.sort(
-            (a, b) => firstLine.split(b).length -
-                      firstLine.split(a).length
-        )[0];
-
-        const rows = [];
-
-        let row = [];
-        let cell = "";
-        let insideQuotes = false;
-
-        for (let i = 0; i < text.length; i++) {
-            const char = text[i];
-
-            if (
-                char === '"' &&
-                insideQuotes &&
-                text[i + 1] === '"'
-            ) {
-                cell += '"';
-                i++;
-            }
-
-            else if (char === '"') {
-                insideQuotes = !insideQuotes;
-            }
-
-            else if (char === delimiter && !insideQuotes) {
-                row.push(cell);
-                cell = "";
-            }
-
-            else if (
-                (char === "\n" || char === "\r") &&
-                !insideQuotes
-            ) {
-                if (char === "\r" && text[i + 1] === "\n") {
-                    i++;
-                }
-
-                row.push(cell);
-
-                if (row.some(value => value.trim())) {
-                    rows.push(row);
-                }
-
-                row = [];
-                cell = "";
-            }
-
-            else {
-                cell += char;
-            }
-        }
-
-        row.push(cell);
-
-        if (row.some(value => value.trim())) {
-            rows.push(row);
-        }
-
-        return rows;
-    }
-
-
-    /* =========================================
-       4. TIMESTAMP PARSER
-    ========================================= */
-
-    function parseTimestamp(value) {
-        if (!value) return null;
-
-        const timestamp = value.trim();
-
-        const match = timestamp.match(
-            /^([A-Za-z]{3})\s+(\d{1,2}),\s*(\d{4})\s*@\s*(\d{1,2}):(\d{2}):(\d{2})(?:\.(\d{1,3}))?$/
-        );
-
-        if (match) {
-            const months = {
-                Jan: 0, Feb: 1, Mar: 2, Apr: 3,
-                May: 4, Jun: 5, Jul: 6, Aug: 7,
-                Sep: 8, Oct: 9, Nov: 10, Dec: 11
-            };
-
-            return new Date(
-                Number(match[3]),
-                months[match[1]],
-                Number(match[2]),
-                Number(match[4]),
-                Number(match[5]),
-                Number(match[6]),
-                Number((match[7] || "0").padEnd(3, "0"))
-            );
-        }
-
-        const date = new Date(timestamp);
-
-        return isNaN(date.getTime()) ? null : date;
-    }
-
-
-    /* =========================================
-       5. TIMESTAMP FORMATTER
-    ========================================= */
-
-    function formatTimestamp(date) {
-        return new Intl.DateTimeFormat("en-US", {
-            timeZone: "Asia/Dhaka",
-            month: "short",
-            day: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false
-        })
-        .format(date)
-        .replace(/, (?=\d{2}:)/, " @ ")
-        + "." + String(date.getMilliseconds()).padStart(3, "0");
-    }
-
-
-    /* =========================================
-       6. OFFICIAL DLR ERROR CODE MAPPING
-    ========================================= */
-
-    const DLR_ERROR_DESCRIPTIONS = {
-        "1000": "Success",
-        "1001": "IP Blacklist",
-        "1002": "Invalid Username",
-        "1003": "Invalid Password",
-        "1004": "Parameter missing",
-        "1005": "Invalid Parameter",
-        "1006": "CLI/Masking Invalid",
-        "1007": "Account Barred",
-        "1008": "Insufficient Balance",
-        "1009": "DND User",
-        "1010": "Invalid MSISDN",
-        "1011": "Duplicate Transaction ID",
-        "1012": "Message lengths exceed",
-        "1013": "No Request found",
-        "1014": "Delivery pending",
-        "1015": "TPS Limit Exceeded",
-        "1016": "Number Barred",
-        "1017": "API is not allowed for user",
-        "1018": "No Live Campaign",
-        "1019": "Messagebody Invalid",
-        "1020": "Internal Server Error",
-        "1021": "CLI/Masking Already Exists",
-        "1050": "Allowed campaigns limit exceeded",
-        "1051": "Allowed SMS quota is completed",
-        "1052": "Submission record not found",
-        "1053": "Invalid Transaction Id",
-        "1054": "MSISDN Limit Exceeded"
+    const options = {
+        timeZone: "Asia/Dhaka",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
     };
 
+    document.getElementById("clock12").textContent =
+        new Intl.DateTimeFormat("en-US", {
+            ...options,
+            hour12: true
+        }).format(now);
 
-    /* =========================================
-       7. ANALYZE CSV DATA
-    ========================================= */
+    document.getElementById("clock24").textContent =
+        new Intl.DateTimeFormat("en-GB", {
+            ...options,
+            hour12: false
+        }).format(now);
+}
 
-    function analyzeCSV(text) {
-        const data = parseCSV(text);
+updateClock();
+setInterval(updateClock, 1000);
 
-        if (data.length < 2) {
-            throw new Error("CSV file is empty.");
-        }
 
-        const headers = data[0].map(
-            value => value.trim().toLowerCase()
+/* ==========================================
+   3. REPORTER NAME SAVING
+========================================== */
+
+const reporterInput = document.getElementById("reporter");
+
+function loadReporterNames() {
+    const names = JSON.parse(
+        localStorage.getItem("dlrReporterNames") || "[]"
+    );
+
+    const list = document.getElementById("reporterList");
+    list.innerHTML = "";
+
+    names.forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        list.appendChild(option);
+    });
+}
+
+reporterInput.addEventListener("change", function() {
+    const name = this.value.trim();
+    if (!name) return;
+
+    const names = JSON.parse(
+        localStorage.getItem("dlrReporterNames") || "[]"
+    );
+
+    if (!names.includes(name)) {
+        names.push(name);
+        localStorage.setItem(
+            "dlrReporterNames",
+            JSON.stringify(names)
         );
+    }
 
-        const messageIndex = headers.findIndex(
-            value => value === "message" ||
-                     value.includes("message")
-        );
+    loadReporterNames();
+});
 
-        const timestampIndex = headers.findIndex(
-            value => value === "@timestamp"
-        );
+loadReporterNames();
 
-        if (timestampIndex < 0) {
-            throw new Error(
-                'CSV must contain an "@timestamp" column.'
-            );
-        }
 
-        if (messageIndex < 0) {
-            throw new Error(
-                'CSV must contain a "message" column.'
-            );
-        }
+/* ==========================================
+   4. CSV PARSER
+========================================== */
 
-        const counts = {};
-        const times = [];
+function parseCSV(text) {
+    text = text.replace(/^\uFEFF/, "");
 
-        for (let i = 1; i < data.length; i++) {
-            const message = data[i][messageIndex] || "";
+    const firstLine = text.split(/\r?\n/)[0] || "";
+    const delimiters = [",", ";", "\t", "|"];
 
-            const codeMatch =
-                message.match(
-                    /(?:statusCode|status_code|errorCode|error_code)\s*[=:]\s*["']?(\d{3,5})/i
-                ) ||
-                message.match(
-                    /"(?:code|status)"\s*:\s*["']?(\d{3,5})/i
-                );
+    const delimiter = delimiters.reduce((best, current) => {
+        return firstLine.split(current).length >
+               firstLine.split(best).length
+            ? current
+            : best;
+    }, ",");
 
-            const code = codeMatch
-                ? codeMatch[1]
-                : "Unknown";
+    const rows = [];
+    let row = [];
+    let cell = "";
+    let quoted = false;
 
-            const description =
-                DLR_ERROR_DESCRIPTIONS[code] ||
-                "Unknown Error Code";
+    for (let i = 0; i < text.length; i++) {
+        const char = text[i];
 
-            const key = code + "||" + description;
+        if (char === '"' && quoted && text[i + 1] === '"') {
+            cell += '"';
+            i++;
+        } else if (char === '"') {
+            quoted = !quoted;
+        } else if (char === delimiter && !quoted) {
+            row.push(cell);
+            cell = "";
+        } else if ((char === "\n" || char === "\r") && !quoted) {
+            if (char === "\r" && text[i + 1] === "\n") i++;
 
-            counts[key] = (counts[key] || 0) + 1;
+            row.push(cell);
 
-            const timestamp = parseTimestamp(
-                data[i][timestampIndex]
-            );
-
-            if (timestamp) {
-                times.push(timestamp);
+            if (row.some(value => value.trim() !== "")) {
+                rows.push(row);
             }
+
+            row = [];
+            cell = "";
+        } else {
+            cell += char;
         }
+    }
 
-        if (!times.length) {
-            throw new Error(
-                'No valid date-time values found in "@timestamp".'
-            );
+    row.push(cell);
+
+    if (row.some(value => value.trim() !== "")) {
+        rows.push(row);
+    }
+
+    return rows;
+}
+
+
+/* ==========================================
+   5. FIND CSV COLUMN
+========================================== */
+
+function findColumn(headers, possibleNames) {
+    return headers.findIndex(header =>
+        possibleNames.includes(
+            header.toLowerCase().trim()
+        )
+    );
+}
+
+
+/* ==========================================
+   6. EXTRACT STATUS CODE
+========================================== */
+
+function extractStatusCode(row, headers, messageIndex) {
+
+    /*
+       First priority:
+       A separate Status Code column.
+    */
+
+    const statusIndex = findColumn(headers, [
+        "statuscode",
+        "status_code",
+        "status code",
+        "errorcode",
+        "error_code",
+        "error code",
+        "responsecode",
+        "response_code",
+        "response code"
+    ]);
+
+    if (statusIndex >= 0) {
+        const value = (row[statusIndex] || "").trim();
+
+        if (/^\d{3,5}$/.test(value)) {
+            return value;
         }
+    }
 
-        times.sort(
-            (a, b) => a.getTime() - b.getTime()
-        );
+    /*
+       Second priority:
+       Extract code from the message column.
+    */
 
-        return {
-            counts,
-            times: [
-                times[0],
-                times[times.length - 1]
-            ]
+    const message = messageIndex >= 0
+        ? (row[messageIndex] || "").trim()
+        : "";
+
+    if (!message) return "Unknown";
+
+    const patterns = [
+        /"(?:statusCode|status_code|errorCode|error_code|responseCode|response_code|code|status)"\s*:\s*["']?(\d{3,5})/i,
+
+        /(?:statusCode|status_code|errorCode|error_code|responseCode|response_code|code|status)\s*[=:]\s*["']?(\d{3,5})/i,
+
+        /^\s*(\d{3,5})(?:\s*[:\-]|$)/,
+
+        /(?:HTTP|http)\s+(\d{3,5})\b/
+    ];
+
+    for (const pattern of patterns) {
+        const match = message.match(pattern);
+
+        if (match) {
+            return match[1];
+        }
+    }
+
+    /*
+       If no valid code is found,
+       do not guess from arbitrary numbers.
+    */
+
+    return "Unknown";
+}
+
+
+/* ==========================================
+   7. TIMESTAMP PARSER
+========================================== */
+
+function parseTimestamp(value) {
+    if (!value) return null;
+
+    value = value.trim();
+
+    const match = value.match(
+        /^([A-Za-z]{3})\s+(\d{1,2}),\s*(\d{4})\s*@\s*(\d{1,2}):(\d{2}):(\d{2})(?:\.(\d{1,3}))?$/
+    );
+
+    if (match) {
+        const months = {
+            Jan: 0, Feb: 1, Mar: 2, Apr: 3,
+            May: 4, Jun: 5, Jul: 6, Aug: 7,
+            Sep: 8, Oct: 9, Nov: 10, Dec: 11
         };
-    }
 
-
-    /* =========================================
-       8. GENERATE MNO / IPTSP REPORT
-    ========================================= */
-
-    async function generate(type) {
-        try {
-            const input = document.getElementById(
-                type === "mno" ? "mnoFile" : "iptspFile"
-            );
-
-            if (!input.files[0]) {
-                throw new Error(
-                    "Please upload the " +
-                    type.toUpperCase() +
-                    " CSV."
-                );
-            }
-
-            const fileText = await input.files[0].text();
-            const result = analyzeCSV(fileText);
-
-            let total = 0;
-            let success = 0;
-
-            const tbody = document.getElementById(
-                type + "Rows"
-            );
-
-            tbody.innerHTML = "";
-
-            const sorted = Object.entries(result.counts).sort(
-                (a, b) => {
-                    const codeA = a[0].split("||")[0];
-                    const codeB = b[0].split("||")[0];
-
-                    if (codeA === "1000") return -1;
-                    if (codeB === "1000") return 1;
-
-                    return codeA.localeCompare(
-                        codeB,
-                        undefined,
-                        { numeric: true }
-                    );
-                }
-            );
-
-            sorted.forEach(([key, count]) => {
-                const [code, description] = key.split("||");
-
-                total += count;
-
-                if (code === "1000") {
-                    success += count;
-                }
-
-                const row = document.createElement("tr");
-
-                [
-                    code,
-                    description,
-                    count.toLocaleString()
-                ].forEach(value => {
-                    const cell = document.createElement("td");
-                    cell.textContent = value;
-                    row.appendChild(cell);
-                });
-
-                tbody.appendChild(row);
-            });
-
-            document.getElementById(
-                type + "Total"
-            ).textContent = total.toLocaleString();
-
-            document.getElementById(
-                type + "Success"
-            ).textContent = success.toLocaleString();
-
-            document.getElementById(
-                type + "Errors"
-            ).textContent = (
-                total - success
-            ).toLocaleString();
-
-            document.getElementById(
-                type + "Period"
-            ).textContent =
-                formatTimestamp(result.times[0]) +
-                " - " +
-                formatTimestamp(result.times[1]);
-
-            document.querySelectorAll(".reporterOut")
-                .forEach(element => {
-                    element.textContent =
-                        reporterInput.value || "Not specified";
-                });
-
-            document.getElementById("message").textContent =
-                type.toUpperCase() +
-                " report generated successfully.";
-
-        } catch (error) {
-            document.getElementById("message").textContent =
-                "Error: " + error.message;
-        }
-    }
-
-
-    /* =========================================
-       9. CREATE REPORT IMAGE
-    ========================================= */
-
-    async function canvasFor(type) {
-        return html2canvas(
-            document.getElementById(type + "Report"),
-            {
-                scale: 2,
-                backgroundColor: "#fff"
-            }
+        return new Date(
+            Number(match[3]),
+            months[match[1]],
+            Number(match[2]),
+            Number(match[4]),
+            Number(match[5]),
+            Number(match[6]),
+            Number((match[7] || "0").padEnd(3, "0"))
         );
     }
 
+    const parsed = new Date(value);
 
-    /* =========================================
-       10. DOWNLOAD PNG / JPG
-    ========================================= */
+    return isNaN(parsed.getTime()) ? null : parsed;
+}
 
-    async function downloadImage(type, format) {
-        const canvas = await canvasFor(type);
+
+/* ==========================================
+   8. TIMESTAMP DISPLAY FORMAT
+========================================== */
+
+function formatTimestamp(date) {
+    const month = date.toLocaleString("en-US", {
+        month: "short"
+    });
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+    const milliseconds = String(date.getMilliseconds()).padStart(3, "0");
+
+    return `${month} ${day}, ${year} @ ${hours}:${minutes}:${seconds}.${milliseconds}`;
+}
+
+
+/* ==========================================
+   9. ANALYZE CSV
+========================================== */
+
+function analyzeCSV(text) {
+    const rows = parseCSV(text);
+
+    if (rows.length < 2) {
+        throw new Error("CSV file has no data rows.");
+    }
+
+    const headers = rows[0].map(header =>
+        header.trim().toLowerCase()
+    );
+
+    const messageIndex = findColumn(headers, [
+        "message",
+        "response",
+        "responsemessage",
+        "response_message"
+    ]);
+
+    const timestampIndex = findColumn(headers, [
+        "@timestamp"
+    ]);
+
+    if (timestampIndex < 0) {
+        throw new Error(
+            'The CSV file must contain an "@timestamp" column.'
+        );
+    }
+
+    const counts = {};
+    const timestamps = [];
+
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+
+        if (!row || row.every(value => !value.trim())) {
+            continue;
+        }
+
+        const code = extractStatusCode(
+            row,
+            headers,
+            messageIndex
+        );
+
+        /*
+           IMPORTANT:
+           Description comes ONLY from official mapping.
+           No message text is used as a description.
+        */
+
+        const description =
+            DLR_ERROR_DESCRIPTIONS[code] ||
+            "Unknown Error Code";
+
+        if (!counts[code]) {
+            counts[code] = {
+                code: code,
+                description: description,
+                count: 0
+            };
+        }
+
+        counts[code].count++;
+
+        const timestamp = parseTimestamp(
+            row[timestampIndex]
+        );
+
+        if (timestamp) {
+            timestamps.push(timestamp);
+        }
+    }
+
+    if (!Object.keys(counts).length) {
+        throw new Error("No valid records found in CSV.");
+    }
+
+    if (!timestamps.length) {
+        throw new Error(
+            'No valid timestamps found in "@timestamp".'
+        );
+    }
+
+    timestamps.sort(
+        (a, b) => a.getTime() - b.getTime()
+    );
+
+    return {
+        counts: Object.values(counts),
+        total: Object.values(counts).reduce(
+            (sum, item) => sum + item.count,
+            0
+        ),
+        success: counts["1000"]
+            ? counts["1000"].count
+            : 0,
+        start: timestamps[0],
+        end: timestamps[timestamps.length - 1]
+    };
+}
+
+
+/* ==========================================
+   10. GENERATE REPORT
+========================================== */
+
+const reportData = {
+    mno: null,
+    iptsp: null
+};
+
+async function generateReport(type) {
+    const fileInput = document.getElementById(
+        type === "mno" ? "mnoFile" : "iptspFile"
+    );
+
+    const message = document.getElementById("message");
+
+    try {
+        if (!fileInput.files.length) {
+            throw new Error(
+                "Please select the " +
+                type.toUpperCase() +
+                " CSV file first."
+            );
+        }
+
+        message.textContent = "Processing CSV file...";
+
+        const text = await fileInput.files[0].text();
+        const result = analyzeCSV(text);
+
+        reportData[type] = result;
+
+        renderReport(type, result);
+
+        message.textContent =
+            type.toUpperCase() +
+            " report generated successfully.";
+
+    } catch (error) {
+        message.textContent = "Error: " + error.message;
+    }
+}
+
+
+/* ==========================================
+   11. RENDER REPORT
+========================================== */
+
+function renderReport(type, data) {
+    const tbody = document.getElementById(type + "Rows");
+    tbody.innerHTML = "";
+
+    data.counts.sort((a, b) => {
+        if (a.code === "1000") return -1;
+        if (b.code === "1000") return 1;
+
+        return a.code.localeCompare(
+            b.code,
+            undefined,
+            { numeric: true }
+        );
+    });
+
+    data.counts.forEach(item => {
+        const tr = document.createElement("tr");
+
+        const codeCell = document.createElement("td");
+        const descriptionCell = document.createElement("td");
+        const countCell = document.createElement("td");
+
+        codeCell.textContent = item.code;
+        descriptionCell.textContent = item.description;
+        countCell.textContent = item.count.toLocaleString();
+
+        tr.appendChild(codeCell);
+        tr.appendChild(descriptionCell);
+        tr.appendChild(countCell);
+
+        tbody.appendChild(tr);
+    });
+
+    const errors = data.total - data.success;
+
+    document.getElementById(type + "Total").textContent =
+        data.total.toLocaleString();
+
+    document.getElementById(type + "Success").textContent =
+        data.success.toLocaleString();
+
+    document.getElementById(type + "Errors").textContent =
+        errors.toLocaleString();
+
+    const period =
+        formatTimestamp(data.start) +
+        " - " +
+        formatTimestamp(data.end);
+
+    document.getElementById(type + "Period").textContent =
+        period;
+
+    document.getElementById("monitoringInfo").textContent =
+        period;
+
+    updateReporterName();
+}
+
+
+/* ==========================================
+   12. UPDATE REPORTER NAME
+========================================== */
+
+function updateReporterName() {
+    const name = reporterInput.value.trim() || "Not specified";
+
+    document.querySelectorAll(".reporter-name").forEach(element => {
+        element.textContent = name;
+    });
+}
+
+reporterInput.addEventListener("input", updateReporterName);
+
+
+/* ==========================================
+   13. FILE SELECTION STATUS
+========================================== */
+
+["mno", "iptsp"].forEach(type => {
+    const input = document.getElementById(type + "File");
+
+    input.addEventListener("change", function() {
+        document.getElementById(type + "FileStatus").textContent =
+            this.files[0]
+                ? this.files[0].name
+                : "No file selected";
+    });
+});
+
+
+/* ==========================================
+   14. COMPANY LOGO
+========================================== */
+
+document.getElementById("logo").addEventListener("change", function() {
+    const file = this.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+        alert("Please select a valid image file.");
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        ["mnoLogo", "iptspLogo"].forEach(id => {
+            const image = document.getElementById(id);
+            image.src = event.target.result;
+            image.style.display = "block";
+        });
+    };
+
+    reader.readAsDataURL(file);
+});
+
+
+/* ==========================================
+   15. CREATE REPORT CANVAS
+========================================== */
+
+async function createReportCanvas(type) {
+    if (!reportData[type]) {
+        throw new Error(
+            "Please generate the " +
+            type.toUpperCase() +
+            " report first."
+        );
+    }
+
+    return await html2canvas(
+        document.getElementById(type + "Report"),
+        {
+            scale: 2,
+            backgroundColor: "#ffffff",
+            useCORS: true
+        }
+    );
+}
+
+
+/* ==========================================
+   16. DOWNLOAD PNG / JPG
+========================================== */
+
+async function downloadImage(type, format) {
+    try {
+        const canvas = await createReportCanvas(type);
 
         const link = document.createElement("a");
 
@@ -1098,162 +1202,163 @@
         link.href = canvas.toDataURL(
             format === "jpg"
                 ? "image/jpeg"
-                : "image/png"
+                : "image/png",
+            0.95
         );
 
         link.click();
+
+    } catch (error) {
+        alert(error.message);
     }
+}
 
 
-    /* =========================================
-       11. DOWNLOAD PDF
-    ========================================= */
+/* ==========================================
+   17. DOWNLOAD PDF
+========================================== */
 
-    async function downloadPDF(type) {
-        const canvas = await canvasFor(type);
+async function downloadPDF(type) {
+    try {
+        const canvas = await createReportCanvas(type);
 
         const { jsPDF } = window.jspdf;
 
         const pdf = new jsPDF("p", "mm", "a4");
 
-        const width = 190;
-        const height = canvas.height * width / canvas.width;
+        const pageWidth = 190;
+        const pageHeight = 277;
 
-        pdf.addImage(
-            canvas.toDataURL("image/png"),
-            "PNG",
-            10,
-            10,
-            width,
-            height
-        );
+        const imageHeight =
+            canvas.height * pageWidth / canvas.width;
 
-        pdf.save(
-            type.toUpperCase() +
-            "-DLR-Report.pdf"
-        );
-    }
+        const imageData = canvas.toDataURL("image/png");
 
-
-    /* =========================================
-       12. COPY REPORT IMAGE
-    ========================================= */
-
-    async function copyImage(type) {
-        try {
-            const canvas = await canvasFor(type);
-
-            canvas.toBlob(async blob => {
-                await navigator.clipboard.write([
-                    new ClipboardItem({
-                        "image/png": blob
-                    })
-                ]);
-
-                alert("Report image copied.");
-            });
-
-        } catch (error) {
-            alert(
-                "Copy image requires HTTPS or localhost."
+        if (imageHeight <= pageHeight) {
+            pdf.addImage(
+                imageData,
+                "PNG",
+                10,
+                10,
+                pageWidth,
+                imageHeight
             );
+        } else {
+            let remaining = imageHeight;
+            let position = 0;
+
+            while (remaining > 0) {
+                pdf.addImage(
+                    imageData,
+                    "PNG",
+                    10,
+                    10 - position,
+                    pageWidth,
+                    imageHeight
+                );
+
+                remaining -= pageHeight;
+                position += pageHeight;
+
+                if (remaining > 0) {
+                    pdf.addPage();
+                }
+            }
         }
+
+        pdf.save(type.toUpperCase() + "-DLR-Report.pdf");
+
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+
+/* ==========================================
+   18. DOWNLOAD SUMMARY CSV
+========================================== */
+
+function downloadCSV(type) {
+    const data = reportData[type];
+
+    if (!data) {
+        alert("Please generate the report first.");
+        return;
     }
 
+    const rows = [
+        ["Status Code", "Error Description", "Count"]
+    ];
 
-    /* =========================================
-       13. DOWNLOAD SUMMARY CSV
-    ========================================= */
-
-    function downloadCSV(type) {
-        const rows = document.querySelectorAll(
-            "#" + type + "Rows tr"
-        );
-
-        let csv =
-            "Status Code,Error Description,Count\r\n";
-
-        rows.forEach(row => {
-            const cells = [
-                ...row.querySelectorAll("td")
-            ];
-
-            if (cells.length === 3) {
-                csv += cells.map(cell =>
-                    '"' +
-                    cell.textContent.replace(/"/g, '""') +
-                    '"'
-                ).join(",") + "\r\n";
-            }
-        });
-
-        const blob = new Blob(
-            ["\uFEFF" + csv],
-            {
-                type: "text/csv;charset=utf-8"
-            }
-        );
-
-        const link = document.createElement("a");
-
-        link.href = URL.createObjectURL(blob);
-
-        link.download =
-            type.toUpperCase() +
-            "-DLR-Summary.csv";
-
-        link.click();
-
-        URL.revokeObjectURL(link.href);
-    }
-
-
-    /* =========================================
-       14. CSV FILE SELECTION STATUS
-    ========================================= */
-
-    ["mno", "iptsp"].forEach(type => {
-        document.getElementById(
-            type + "File"
-        ).onchange = function () {
-            document.getElementById(
-                type + "Status"
-            ).textContent =
-                this.files[0]?.name ||
-                "No file selected";
-        };
+    data.counts.forEach(item => {
+        rows.push([
+            item.code,
+            item.description,
+            item.count
+        ]);
     });
 
+    const csv = rows.map(row =>
+        row.map(value =>
+            '"' + String(value).replace(/"/g, '""') + '"'
+        ).join(",")
+    ).join("\r\n");
 
-    /* =========================================
-       15. COMPANY LOGO UPLOAD
-    ========================================= */
+    const blob = new Blob(
+        ["\uFEFF" + csv],
+        { type: "text/csv;charset=utf-8" }
+    );
 
-    document.getElementById("logo").onchange = function () {
-        const file = this.files[0];
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
 
-        if (!file) return;
+    link.href = url;
+    link.download = type.toUpperCase() + "-DLR-Summary.csv";
 
-        const reader = new FileReader();
+    link.click();
 
-        reader.onload = event => {
-            document.querySelectorAll(".report-brand")
-                .forEach(element => {
-                    element.innerHTML =
-                        '<img src="' +
-                        event.target.result +
-                        '" style="' +
-                        'max-height:45px;' +
-                        'max-width:200px;' +
-                        'object-fit:contain' +
-                        '">';
-                });
-        };
+    URL.revokeObjectURL(url);
+}
 
-        reader.readAsDataURL(file);
-    };
+
+/* ==========================================
+   19. COPY REPORT IMAGE
+========================================== */
+
+async function copyImage(type) {
+    try {
+        const canvas = await createReportCanvas(type);
+
+        if (!navigator.clipboard || !window.ClipboardItem) {
+            throw new Error(
+                "Image copy requires HTTPS or localhost."
+            );
+        }
+
+        const blob = await new Promise(resolve =>
+            canvas.toBlob(resolve, "image/png")
+        );
+
+        await navigator.clipboard.write([
+            new ClipboardItem({
+                "image/png": blob
+            })
+        ]);
+
+        alert("Report image copied successfully.");
+
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+
+/* ==========================================
+   20. INITIALIZATION
+========================================== */
+
+updateReporterName();
 
 </script>
-
 </body>
 </html>
