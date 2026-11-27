@@ -611,7 +611,7 @@ const DLR_ERROR_DESCRIPTIONS = {
     "1051": "Allowed SMS quota is completed",
     "1052": "Submission record not found",
     "1053": "Invalid Transaction Id",
-    "1054": "MSISDN Limit Exceeded"
+    "1054": "MSISDN Limit Exceeded",
     "1429": "Too Many Request. Try in a Minute."
 };
 
